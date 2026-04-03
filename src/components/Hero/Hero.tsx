@@ -1,179 +1,83 @@
 "use client";
 
-import { Canvas } from "@react-three/fiber";
-import { useRef, useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-const PhonographCanvas = () => {
-  const vinylRef = useRef<any>(null);
-
-  useEffect(() => {
-    if (vinylRef.current) {
-      // Animate vinyl rotation with GSAP using steps easing for stop-motion effect
-      gsap.to(vinylRef.current.rotation, {
-        y: Math.PI * 2,
-        duration: 12,
-        repeat: -1,
-        ease: "steps(12)",
-      });
-    }
-  }, []);
-
-  return (
-    <group>
-      {/* Ambient light */}
-      <ambientLight intensity={0.5} />
-      {/* Point light for warm lighting */}
-      <pointLight position={[-5, 10, 5]} intensity={1.5} color={0xffb84d} />
-      {/* Base platform */}
-      <mesh position={[0, -0.2, 0]}>
-        <cylinderGeometry args={[1.8, 1.8, 0.05, 32]} />
-        <meshPhongMaterial color={0x5a3e2b} />
-      </mesh>
-      {/* Vinyl record */}
-      <mesh ref={vinylRef} rotation={[0, 0, 0]}>
-        <cylinderGeometry args={[1.5, 1.5, 0.1, 64]} />
-        <meshPhongMaterial color={0x1a1a1a} shininess={10} />
-      </mesh>
-      {/* Tonearm */}
-      <group rotation={[0, 0, -0.2]} position={[0.3, 0.1, 0]}>
-        <mesh>
-          <cylinderGeometry args={[0.02, 0.02, 0.8, 8]} />
-          <meshPhongMaterial color={0xc79a3b} shininess={50} />
-        </mesh>
-      </group>
-      {/* Phonograph horn */}
-      <group rotation={[0, 0, Math.PI / 4]} position={[0, 0.8, -1.2]}>
-        <mesh>
-          <coneGeometry args={[0.3, 2, 8]} />
-          <meshPhongMaterial color={0xc79a3b} shininess={50} />
-        </mesh>
-      </group>
-    </group>
-  );
-};
 
 export default function Hero() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const canvasRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
-  const descRef = useRef<HTMLParagraphElement>(null);
-  const ctaRef = useRef<HTMLButtonElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-
-    // Cinematic entrance animation with power3.out easing
-    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+    const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
 
     tl.fromTo(
-      canvasRef.current,
-      { opacity: 0, scale: 0.8, x: -50 },
-      { opacity: 1, scale: 1, x: 0, duration: 1.2 }
+      titleRef.current,
+      { y: 100, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1.5, delay: 0.5 }
     )
-      .fromTo(
-        titleRef.current,
-        { opacity: 0, y: 60 },
-        { opacity: 1, y: 0, duration: 1 },
-        "-=0.8"
-      )
-      .fromTo(
-        subtitleRef.current,
-        { opacity: 0, y: 40 },
-        { opacity: 1, y: 0, duration: 0.8 },
-        "-=0.6"
-      )
-      .fromTo(
-        descRef.current,
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.8 },
-        "-=0.5"
-      )
-      .fromTo(
-        ctaRef.current,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.6 },
-        "-=0.4"
-      );
-
-    // Parallax effect on scroll
-    gsap.to(canvasRef.current, {
-      yPercent: -20,
-      ease: "none",
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: true,
-      },
-    });
+    .fromTo(
+      subtitleRef.current,
+      { y: 20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1 },
+      "-=1"
+    )
+    .fromTo(
+      ctaRef.current,
+      { y: 20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1 },
+      "-=0.8"
+    );
   }, []);
 
-  const scrollToProjects = () => {
-    const projectsSection = document.getElementById("projects");
-    if (projectsSection) {
-      projectsSection.scrollIntoView({ behavior: "smooth" });
-    }
+  const scrollToAbout = () => {
+    // Assuming next section has an ID or by calculating height
+    window.scrollTo({
+      top: window.innerHeight,
+      behavior: "smooth"
+    });
   };
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative min-h-screen w-full flex flex-col items-center justify-center pt-32 pb-20 overflow-hidden"
+    <section 
+      ref={containerRef}
+      className="relative min-h-screen w-full flex flex-col items-center justify-center pointer-events-none"
     >
-      <div className="container mx-auto max-w-[1200px] px-6 text-center z-10">
-        <div className="flex flex-col items-center justify-center space-y-8">
-          <p className="text-secondary-text font-serif italic text-lg tracking-[0.1em] opacity-80">
-            A portfolio by
-          </p>
-          <div className="space-y-4">
-            <h1
-              ref={titleRef}
-              className="text-[10vw] sm:text-[120px] font-heading leading-none text-primary-text tracking-tight mx-auto"
-            >
-              John Ebenezer
-            </h1>
-            <div className="w-24 h-[1px] bg-primary-text/30 mx-auto" />
-          </div>
-          <p
+      <div className="container mx-auto px-6 z-10 flex flex-col items-center md:items-start text-center md:text-left pointer-events-auto">
+        <div className="max-w-4xl">
+          <h1 
+            ref={titleRef}
+            className="font-heading text-6xl md:text-[140px] font-bold tracking-tighter leading-none text-highlight mix-blend-difference select-none"
+          >
+            John Ebenezer
+          </h1>
+          
+          <p 
             ref={subtitleRef}
-            className="text-xl sm:text-2xl font-serif text-primary-text/80 max-w-2xl mx-auto italic"
+            className="font-mono text-[10px] md:text-sm tracking-[0.4em] md:tracking-[0.8em] uppercase text-accent/80 mt-6 blur-[0.2px] select-none"
           >
-            Crafting digital experiences with precision and passion.
+            Analog Heart, Digital Brain
           </p>
-          <p
-            ref={descRef}
-            className="text-base sm:text-lg font-body text-primary-text/70 max-w-md mx-auto leading-relaxed"
-          >
-            Full Stack Developer specializing in accessible, pixel-perfect, and performant web applications.
-          </p>
-          <div className="pt-8">
-             <button
-              ref={ctaRef}
-              onClick={scrollToProjects}
-              className="group relative px-10 py-4 bg-transparent border border-primary-text/40 text-primary-text font-serif text-sm tracking-widest uppercase overflow-hidden hover:border-primary-text transition-colors duration-500"
+
+          <div ref={ctaRef} className="mt-16 md:mt-24">
+            <button 
+              onClick={scrollToAbout}
+              className="group relative px-8 py-3 border border-accent/30 hover:border-accent transition-colors duration-500 overflow-hidden"
             >
-              <span className="relative z-10 transition-colors duration-500">
-                Turn the Page
+              <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-accent/80 group-hover:text-accent">
+                Discover The Narrative
               </span>
+              <div className="absolute inset-0 bg-accent/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
             </button>
           </div>
         </div>
       </div>
-      
-      {/* Centered Phonograph below text or blended in background */}
-      <div 
-        ref={canvasRef} 
-        className="relative w-full aspect-video max-w-[600px] mx-auto opacity-70 mt-12 md:mt-16 pointer-events-none"
-      >
-        <Canvas
-          className="w-full h-full"
-          camera={{ position: [0, 1.5, 5], fov: 45 }}
-        >
-          <PhonographCanvas />
-        </Canvas>
+
+      {/* Scroll Down Hint in DOM */}
+      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-40 animate-pulse select-none">
+        <span className="font-mono text-[9px] tracking-[0.5em] uppercase text-accent">Scroll</span>
+        <div className="w-[1px] h-12 bg-accent/30" />
       </div>
     </section>
   );

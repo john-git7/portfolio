@@ -1,16 +1,19 @@
+"use client";
+
 import { useRef, useState } from "react";
 import * as THREE from "three";
-import { Float, Html, Environment } from "@react-three/drei";
+import { Float, Environment, ContactShadows } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useDeterministicRhythm } from "../animations/rhythm";
 import { useMouseInteraction } from "../animations/interactions";
+import { ResponsiveConfig } from "../hooks/useResponsiveScene";
 
 // --- Sub-components consume the shared rhythm context ---
 
 /**
  * Procedural Vinyl with determined BPM timing
  */
-function Vinyl({ rhythm, hovered }: { rhythm: any, hovered: boolean }) {
+function Vinyl({ rhythm, hovered, motionIntensity }: { rhythm: any, hovered: boolean, motionIntensity: number }) {
   const meshRef = useRef<THREE.Mesh>(null);
   
   useFrame(() => {
@@ -23,11 +26,11 @@ function Vinyl({ rhythm, hovered }: { rhythm: any, hovered: boolean }) {
     const modulation = 0.05 * Math.sin(fullCycle * 0.5);
     
     // Explicitly set rotation relative to the clock
-    meshRef.current.rotation.y = fullCycle * baseSpeed * modFactor + (modulation * modFactor);
+    meshRef.current.rotation.y = (fullCycle * baseSpeed * modFactor + (modulation * modFactor)) * (0.8 + motionIntensity * 0.2);
     
-    // Subtle axis wobble
-    meshRef.current.rotation.x = 0.002 * Math.sin(fullCycle * 2.0);
-    meshRef.current.rotation.z = 0.002 * Math.cos(fullCycle * 1.5);
+    // Subtle axis wobble - Reduced on mobile
+    meshRef.current.rotation.x = 0.002 * Math.sin(fullCycle * 2.0) * motionIntensity;
+    meshRef.current.rotation.z = 0.002 * Math.cos(fullCycle * 1.5) * motionIntensity;
   });
 
   return (
@@ -74,16 +77,16 @@ function Vinyl({ rhythm, hovered }: { rhythm: any, hovered: boolean }) {
 /**
  * Rhythm-aware Tonearm
  */
-function Tonearm({ rhythm }: { rhythm: any }) {
+function Tonearm({ rhythm, motionIntensity }: { rhythm: any, motionIntensity: number }) {
   const groupRef = useRef<THREE.Group>(null);
   
   useFrame(() => {
     if (!groupRef.current) return;
     const { smoothPulse, drift } = rhythm;
     
-    const vibrato = Math.sin(rhythm.fullCycle * 20) * 0.001 * smoothPulse;
+    const vibrato = Math.sin(rhythm.fullCycle * 20) * 0.001 * smoothPulse * motionIntensity;
     groupRef.current.rotation.z = -0.05 + vibrato;
-    groupRef.current.rotation.y = drift * 0.02;
+    groupRef.current.rotation.y = drift * 0.02 * motionIntensity;
   });
 
   return (
@@ -103,7 +106,7 @@ function Tonearm({ rhythm }: { rhythm: any }) {
 /**
  * Lighting system synchronized to rhythm and hover state
  */
-function SceneLighting({ rhythm, hovered }: { rhythm: any, hovered: boolean }) {
+function SceneLighting({ rhythm, hovered, lightIntensity }: { rhythm: any, hovered: boolean, lightIntensity: number }) {
   const spotlightRef = useRef<THREE.SpotLight>(null);
   const hoverFactor = useRef(0);
 
@@ -112,18 +115,18 @@ function SceneLighting({ rhythm, hovered }: { rhythm: any, hovered: boolean }) {
     hoverFactor.current = THREE.MathUtils.lerp(hoverFactor.current, hovered ? 1 : 0, delta * 3);
     const h = hoverFactor.current;
     
-    const { sharpPulse, drift, smoothPulse } = rhythm;
+    const { sharpPulse, drift } = rhythm;
     
     if (spotlightRef.current) {
-      const baseIntensity = 3000;
+      const baseIntensity = 3000 * lightIntensity;
       const hoverMultiplier = 1 + (h * 0.2);
-      spotlightRef.current.intensity = (baseIntensity + (sharpPulse * 500) + (drift * 200)) * hoverMultiplier;
+      spotlightRef.current.intensity = (baseIntensity + (sharpPulse * 500 * lightIntensity) + (drift * 200 * lightIntensity)) * hoverMultiplier;
     }
   });
 
   return (
     <>
-      <Environment files="/studio_small_03_1k.hdr" environmentIntensity={hovered ? 0.5 : 0.3} />
+      <Environment files="/studio_small_03_1k.hdr" environmentIntensity={hovered ? 0.5 * lightIntensity : 0.3 * lightIntensity} />
       
       <spotLight 
         ref={spotlightRef}
@@ -137,7 +140,7 @@ function SceneLighting({ rhythm, hovered }: { rhythm: any, hovered: boolean }) {
 
       <pointLight 
         position={[-8, 4, 6]} 
-        intensity={50 + (1 - rhythm.smoothPulse) * 30} 
+        intensity={(50 + (1 - rhythm.smoothPulse) * 30) * lightIntensity} 
         color="#00ffff" 
         distance={25} 
       />
@@ -145,20 +148,22 @@ function SceneLighting({ rhythm, hovered }: { rhythm: any, hovered: boolean }) {
   );
 }
 
-export default function HeroScene({ isMobile }: { isMobile: boolean }) {
+export default function HeroScene({ responsive }: { responsive: ResponsiveConfig }) {
   const [hovered, setHovered] = useState(false);
   const groupRef = useRef<THREE.Group>(null);
   
   const targetBPM = hovered ? 84 : 72;
   const rhythm = useDeterministicRhythm(targetBPM);
   
-  useMouseInteraction(groupRef, isMobile ? 0.3 : 0.6);
+  const { phonographScale, phonographPosition, motionIntensity, lightIntensity } = responsive;
+  
+  useMouseInteraction(groupRef, 0.6 * motionIntensity);
 
   useFrame((state, delta) => {
     if (!groupRef.current) return;
     const { smoothPulse, drift } = rhythm;
-    groupRef.current.position.y = smoothPulse * 0.02;
-    groupRef.current.rotation.y += drift * 0.0005;
+    groupRef.current.position.y = phonographPosition[1] + (smoothPulse * 0.02 * motionIntensity);
+    groupRef.current.rotation.y += drift * 0.0005 * motionIntensity;
   });
 
   return (
@@ -166,58 +171,37 @@ export default function HeroScene({ isMobile }: { isMobile: boolean }) {
       ref={groupRef} 
       onPointerOver={() => setHovered(true)} 
       onPointerOut={() => setHovered(false)}
-      position={[0.5, -0.5, 0]}
+      position={phonographPosition}
+      scale={phonographScale}
     >
-      <SceneLighting rhythm={rhythm} hovered={hovered} />
+      <SceneLighting rhythm={rhythm} hovered={hovered} lightIntensity={lightIntensity} />
       
-      <Html
-        position={isMobile ? [0, 5, -2] : [-2.5, 3, -5]}
-        transform
-        distanceFactor={isMobile ? 2.2 : 4.5}
-        center
-        className="pointer-events-none select-none"
-      >
-        <div 
-          className="flex flex-col items-start"
-          style={{
-            transform: `translateY(${rhythm.smoothPulse * 5}px)`,
-            opacity: 0.8 + rhythm.sharpPulse * 0.2,
-            transition: 'opacity 0.1s linear'
-          }}
-        >
-          <h1 
-            className="font-heading text-6xl md:text-[140px] font-bold tracking-tighter leading-none text-highlight mix-blend-difference whitespace-nowrap animate-in fade-in duration-1000"
-            style={{ transform: `translateX(${rhythm.drift * 10}px)` }}
-          >
-            John Ebenezer
-          </h1>
-          <p 
-            className="font-mono text-[10px] md:text-sm tracking-[0.4em] md:tracking-[0.8em] uppercase text-accent/80 mt-6 blur-[0.5px]"
-            style={{ 
-              transform: `translateX(${Math.sin((rhythm.fullCycle + 0.1) * Math.PI) * 5}px)`,
-              opacity: 0.6 + Math.pow(Math.sin((rhythm.beatPhase + 0.1) * Math.PI), 3) * 0.4
-            }}
-          >
-            Analog Heart, Digital Brain
-          </p>
-        </div>
-      </Html>
+      <Vinyl rhythm={rhythm} hovered={hovered} motionIntensity={motionIntensity} />
+      <Tonearm rhythm={rhythm} motionIntensity={motionIntensity} />
 
-      <Vinyl rhythm={rhythm} hovered={hovered} />
-      <Tonearm rhythm={rhythm} />
-
+      {/* Phonograph Horn ART */}
       <group position={[1.5, 0.2, -1.5]} rotation={[0.4, -0.8, -0.2]}>
         <mesh castShadow>
           <cylinderGeometry args={[2, 0.1, 3.5, 32, 1, true]} />
           <meshStandardMaterial color="#d4a017" metalness={0.95} roughness={0.15} side={THREE.DoubleSide} />
         </mesh>
-        <pointLight intensity={rhythm.sharpPulse * 500 + 100} color="#ffaa00" distance={5} />
+        <pointLight intensity={(rhythm.sharpPulse * 500 + 100) * lightIntensity} color="#ffaa00" distance={5} />
       </group>
 
+      {/* Phonograph Base */}
       <mesh receiveShadow castShadow>
         <boxGeometry args={[4, 0.4, 4]} />
         <meshStandardMaterial color="#1a120b" roughness={0.7} metalness={0.1} />
       </mesh>
+
+      {/* Ground system for stability */}
+      <ContactShadows 
+        position={[0, -0.21, 0]} 
+        opacity={0.4} 
+        scale={10} 
+        blur={2.5} 
+        far={2} 
+      />
     </group>
   );
 }
