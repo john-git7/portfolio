@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kraft Paper</title>
+<style>
+  body, html { margin: 0; padding: 0; min-height: 100vh; background: #C19A6B; }
+  
+  /* The fine textural pulp of the paper */
+  .paper-pulp {
+    position: fixed;
+    inset: 0;
+    opacity: 0.4;
+    mix-blend-mode: multiply;
+    filter: url(#paper-grain);
+    pointer-events: none;
+  }
+  
+  /* The large wrinkles and crinkles */
+  .paper-wrinkles {
+    position: fixed;
+    inset: 0;
+    opacity: 0.6;
+    mix-blend-mode: color-burn;
+    filter: url(#paper-crumple);
+    pointer-events: none;
+  }
+
+  /* Some big CSS gradients to mimic large soft folds */
+  .paper-folds {
+    position: fixed;
+    inset: 0;
+    mix-blend-mode: multiply;
+    background: 
+      radial-gradient(circle at 30% 20%, transparent 0%, rgba(0,0,0,0.05) 40%, transparent 80%),
+      radial-gradient(circle at 70% 80%, transparent 10%, rgba(0,0,0,0.06) 50%, transparent 90%),
+      linear-gradient(110deg, transparent 30%, rgba(0,0,0,0.04) 35%, transparent 40%);
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<svg style="display:none;">
+  <!-- Fine grain and pulp -->
+  <filter id="paper-grain">
+    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
+    <feColorMatrix type="matrix" values="0 0 0 0 0, 0 0 0 0 0, 0 0 0 0 0, 1 0 0 0 0" in="noise" result="alphaNoise" />
+    <feDiffuseLighting in="alphaNoise" lighting-color="#FFF" surfaceScale="1" result="light">
+      <feDistantLight azimuth="45" elevation="60" />
+    </feDiffuseLighting>
+  </filter>
+
+  <!-- Large crumples -->
+  <filter id="paper-crumple">
+    <feTurbulence type="fractalNoise" baseFrequency="0.005" numOctaves="6" result="noise" />
+    <feColorMatrix type="matrix" values="0 0 0 0 0, 0 0 0 0 0, 0 0 0 0 0, 1 0 0 0 0" in="noise" result="alphaNoise" />
+    <feDiffuseLighting in="alphaNoise" lighting-color="#FFF" surfaceScale="5" result="light">
+      <feDistantLight azimuth="135" elevation="30" />
+    </feDiffuseLighting>
+    <feComponentTransfer in="light" result="highContrast">
+       <feFuncR type="linear" slope="2" intercept="-0.5" />
+       <feFuncG type="linear" slope="2" intercept="-0.5" />
+       <feFuncB type="linear" slope="2" intercept="-0.5" />
+    </feComponentTransfer>
+  </filter>
+</svg>
+
+<div class="paper-pulp"></div>
+<div class="paper-wrinkles"></div>
+<div class="paper-folds"></div>
+
+</body>
+</html>

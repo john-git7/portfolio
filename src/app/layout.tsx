@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import VintagePaperBackground from "../components/VintagePaperBackground";
 
 const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
@@ -23,7 +22,7 @@ const jetBrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "John Ebenezer - Full Stack Developer",
-  description: "Mechanical Music Studio Portfolio",
+  description: "Cinematic 3D Portfolio",
 };
 
 export default function RootLayout({
@@ -36,7 +35,6 @@ export default function RootLayout({
       <body
         className={`${playfairDisplay.variable} ${inter.variable} ${jetBrainsMono.variable} antialiased text-primary-text min-h-screen`}
       >
-        <VintagePaperBackground />
         {children}
       </body>
     </html>

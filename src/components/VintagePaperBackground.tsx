@@ -14,7 +14,7 @@ export default function VintagePaperBackground() {
       // --- WRINKLE ANIMATION LAYER ---
 
       // 1. Organic Breathing Motion
-      // Extremely slow and smooth to avoid distraction
+      // Extremely slow and smooth background scale
       gsap.to(wrinkleRef.current, {
         scale: 1.01,
         duration: 8,
@@ -24,44 +24,54 @@ export default function VintagePaperBackground() {
         transformOrigin: "center center",
       });
 
-      // 2. Handcrafted Cartoon Boil
-      // Slower framerate (~3-4 fps) with slight shifts to feel like hand-drawn frames
+      // 2. Stop-motion jitter for wrinkles
+      // Small 1px shifts, step-based easing for handcrafted feel
       const tlx = gsap.timeline({ repeat: -1, yoyo: true });
       tlx.to(wrinkleRef.current, {
-        x: 2,
-        duration: 1.2,
-        ease: "steps(4)",
+        x: 1,
+        duration: 2,
+        ease: "steps(8)",
       }).to(wrinkleRef.current, {
-        x: -2,
-        duration: 1.2,
-        ease: "steps(4)",
+        x: -1,
+        duration: 2,
+        ease: "steps(8)",
       });
 
       const tly = gsap.timeline({ repeat: -1, yoyo: true });
       tly.to(wrinkleRef.current, {
-        y: 2,
-        duration: 1.4,
-        ease: "steps(4)",
+        y: 1,
+        duration: 2.5,
+        ease: "steps(10)",
       }).to(wrinkleRef.current, {
-        y: -2,
-        duration: 1.4,
-        ease: "steps(4)",
+        y: -1,
+        duration: 2.5,
+        ease: "steps(10)",
       });
 
       // --- GRAIN ANIMATION LAYER ---
       
-      // 3. Cartoon Stop-Motion Grain
-      // We remove the high-frequency opacity blinking that causes the "malfunction" feel.
-      // Instead, we lock opacity and step through 4 distinct positions every 0.25s (4fps).
-      gsap.set(grainRef.current, { opacity: 0.4 });
+      // 3. Subtle grain flicker
+      // Slight opacity shifts, step-based, very low visibility
+      // Base opacity is 0.03 via CSS, we animate between 0.02 and 0.04
+      gsap.fromTo(grainRef.current, 
+        { opacity: 0.02 }, 
+        {
+          opacity: 0.04,
+          duration: 1.2,
+          ease: "steps(4)",
+          repeat: -1,
+          yoyo: true,
+        }
+      );
 
+      // Stop-motion grain position jitter (very subtle 1px shifts)
       const grainTl = gsap.timeline({ repeat: -1 });
       grainTl
         .set(grainRef.current, { x: 0, y: 0 })
-        .to(grainRef.current, { x: 5, y: -5, duration: 0.25, ease: "steps(1)" })
-        .to(grainRef.current, { x: -5, y: 5, duration: 0.25, ease: "steps(1)" })
-        .to(grainRef.current, { x: 5, y: 5, duration: 0.25, ease: "steps(1)" })
-        .to(grainRef.current, { x: -5, y: -5, duration: 0.25, ease: "steps(1)" });
+        .to(grainRef.current, { x: 1, y: -1, duration: 0.3, ease: "steps(1)" })
+        .to(grainRef.current, { x: -1, y: 1, duration: 0.3, ease: "steps(1)" })
+        .to(grainRef.current, { x: 1, y: 1, duration: 0.3, ease: "steps(1)" })
+        .to(grainRef.current, { x: -1, y: -1, duration: 0.3, ease: "steps(1)" });
     });
 
     return () => ctx.revert();

@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F5E6C8;
-  --surface: #EAD7B7;
-  --primary-text: #2B1E12;
-  --accent: #D4A017;
-  --highlight: #E4C06F;
+  --background: #0a0806;
+  --surface: #120e0a;
+  --primary-text: #e6e0d4;
+  --accent: #d4a017;
+  --highlight: #f0c554;
 }
 
 @theme inline {
@@ -14,146 +14,125 @@
   --color-primary-text: var(--primary-text);
   --color-accent: var(--accent);
   --color-highlight: var(--highlight);
-  --font-sans: var(--font-inter);
-  --font-mono: var(--font-jetbrains-mono);
-  --font-heading: var(--font-playfair-display);
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  --font-heading: 'Outfit', sans-serif;
 }
 
-* {
-  box-sizing: border-box;
+@layer base {
+  html, body {
+    @apply m-0 p-0 overflow-x-hidden bg-background text-primary-text selection:bg-accent selection:text-background;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Pseudo element for minimal static noise */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none;
+    z-index: 50;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--background);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #332a20;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+  }
+
+  /* Typography polish */
+  p {
+    line-height: 1.8;
+  }
+
+  /* Remove 3D canvas touch actions overscroll */
+  canvas {
+    touch-action: none;
+  }
 }
 
-html.lenis,
-html.lenis body {
-  height: auto;
+@layer components {
+  /* Vintage Paper Background Styles */
+  .vintage-paper-container {
+    @apply absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden;
+  }
+
+  .vintage-paper-base {
+    @apply absolute top-0 left-0 w-full h-full bg-[#0a0806] opacity-20;
+  }
+
+  .vintage-paper-wrinkles {
+    @apply absolute -top-[10%] -left-[10%] w-[120%] h-[120%] opacity-10 mix-blend-overlay;
+    background-image: url("https://www.transparenttextures.com/patterns/parchment.png");
+  }
+
+  .vintage-paper-grain {
+    @apply absolute -top-[50%] -left-[50%] w-[200%] h-[200%] opacity-[0.03] mix-blend-color-dodge;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  }
+
+  .vintage-paper-lighting {
+    @apply absolute top-0 left-0 w-full h-full mix-blend-multiply;
+    background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.4) 100%);
+  }
 }
 
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
+/* Custom Navigation Styles */
+.nav-blur {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
+/* 3D Scene Adjustments for Mobile */
+@media (max-width: 768px) {
+  h1 { 
+    font-size: clamp(3rem, 15vw, 6rem) !important; 
+    letter-spacing: -0.05em !important;
+  }
+  h2 { 
+    font-size: clamp(2rem, 10vw, 4rem) !important; 
+  }
+  p { 
+    font-size: clamp(0.75rem, 3vw, 1rem) !important;
+    line-height: 1.6 !important;
+  }
+  
+  /* Navigation compression */
+  .fixed.right-4 {
+    @apply right-2 scale-90;
+  }
 }
 
-.lenis.lenis-stopped {
-  overflow: hidden;
+/* Hide scrollbar but keep functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
-.lenis.lenis-scrolling iframe {
-  pointer-events: none;
+/* Animation Utilities */
+.interactive {
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-body {
-  background: transparent;
-  color: var(--primary-text);
-  font-family: var(--font-inter);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.interactive:hover {
+  @apply text-accent transform scale-[1.01];
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--background);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--accent);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--highlight);
-}
-
-/* Selection */
-::selection {
-  background: var(--accent);
-  color: var(--background);
-}
-
-/* Smooth focus outline */
-*:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-/* Input and textarea autofill */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-textarea:-webkit-autofill,
-textarea:-webkit-autofill:hover,
-textarea:-webkit-autofill:focus {
-  -webkit-text-fill-color: var(--primary-text);
-  -webkit-box-shadow: 0 0 0px 1000px var(--surface) inset;
-  transition: background-color 5000s ease-in-out 0s;
-}
-
-/* --- Vintage Paper Background System --- */
-.vintage-paper-container {
-  position: fixed;
-  inset: 0;
-  z-index: -1; /* Placed behind all other content */
-  pointer-events: none; /* Allows interacting with content below */
-  overflow: hidden;
-  background-color: var(--background); /* Solid map base: #F5E6C8 */
-}
-
-.vintage-paper-base {
-  position: absolute;
-  inset: 0;
-  /* Warm gradient background (#F5E6C8 → #EAD7B7) */
-  background: linear-gradient(135deg, var(--background) 0%, var(--surface) 100%);
-}
-
-.vintage-paper-wrinkles {
-  position: absolute;
-  top: -2%;
-  left: -2%;
-  width: 104%;
-  height: 104%;
-  mix-blend-mode: multiply;
-  /* Dark, prominent radial stains. 30-45% opacity */
-  background:
-    radial-gradient(ellipse at 20% 80%, rgba(100, 70, 40, 0.3) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 20%, rgba(100, 70, 40, 0.25) 0%, transparent 60%),
-    radial-gradient(circle at 60% 60%, rgba(80, 50, 30, 0.2) 0%, transparent 70%),
-    radial-gradient(circle at 30% 30%, rgba(100, 70, 40, 0.25) 0%, transparent 55%);
-}
-
-.vintage-paper-grain {
-  position: absolute;
-  /* Make grain layer super wide so translating it by 100px doesn't reveal edges */
-  top: -10%;
-  left: -10%;
-  width: 120%;
-  height: 120%;
-  pointer-events: none;
-  mix-blend-mode: multiply;
-  /* High frequency 2px patterns using 15%-25% opacity so it's definitively visible as grain on #F5E6C8 */
-  background:
-    repeating-radial-gradient(circle at 0 0, transparent 0, rgba(60, 40, 20, 0.15) 1px, transparent 2px),
-    repeating-radial-gradient(circle at 100% 100%, transparent 0, rgba(60, 40, 20, 0.15) 1px, transparent 2px),
-    repeating-linear-gradient(45deg, transparent 0, rgba(0, 0, 0, 0.08) 1px, transparent 2px);
-}
-
-.vintage-paper-lighting {
-  position: absolute;
-  inset: 0;
-  mix-blend-mode: overlay;
-  /* Soft highlights and depth */
-  background:
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.25) 0%, transparent 50%),
-    radial-gradient(circle at 50% 100%, rgba(160, 130, 90, 0.2) 0%, transparent 60%),
-    radial-gradient(circle at 50% 50%, transparent 40%, rgba(43, 30, 18, 0.08) 150%);
-}
-
-/* Typography polish */
-p {
-  line-height: 1.8;
+/* Utility for responsive 3D visibility padding */
+.responsive-container {
+  @apply px-6 md:px-12 lg:px-24;
 }
