@@ -75,7 +75,7 @@ export default function Projects() {
         <div className="mb-16 border-b border-primary-text/20 pb-8 flex justify-between items-end">
           <div>
             <span className="font-mono text-[10px] tracking-widest uppercase text-primary-text/40 block mb-2">[ ARCHIVE : ACTIVE ]</span>
-            <h2 className="text-3xl md:text-5xl font-mono uppercase tracking-tighter text-primary-text leading-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-mono uppercase tracking-tighter text-primary-text leading-tight">
               Signal Path.<br />
               <span className="text-primary-text/50">Core systems.</span>
             </h2>
@@ -103,7 +103,7 @@ export default function Projects() {
               
               <div className="md:w-3/4 flex flex-col justify-between">
                 <div>
-                  <h3 className="font-mono text-xl md:text-2xl uppercase tracking-wider text-primary-text mb-4 group-hover:text-accent transition-colors duration-500">
+                  <h3 className="font-mono text-lg sm:text-xl md:text-2xl uppercase tracking-wider text-primary-text mb-4 group-hover:text-accent transition-colors duration-500">
                     {project.title}
                   </h3>
                   <p className="text-primary-text/70 text-base leading-relaxed max-w-2xl font-light">

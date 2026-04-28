@@ -1,15 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 import { useLenis } from 'lenis/react';
 import { useAppStore } from '@/store/appStore';
 
 const navItems = [
-  { id: "hero", label: "Home" },
-  { id: "projects", label: "Signal Path" },
-  { id: "skills", label: "Patch Panel" },
-  { id: "contact", label: "Master Out" },
+  { id: "hero", label: "Home", short: "Home" },
+  { id: "projects", label: "Signal Path", short: "Signal" },
+  { id: "skills", label: "Patch Panel", short: "Patch" },
+  { id: "contact", label: "Master Out", short: "Out" },
 ];
 
 export default function Navbar() {
@@ -71,35 +70,43 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Top Left Control Surface Toggle */}
-      <div className="fixed top-6 left-6 md:top-10 md:left-10 z-[100] pointer-events-auto flex items-center gap-4">
-        <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-primary-text/40">System:</span>
+      {/* Control Surface Toggle (Bottom-left on mobile, Top-left on desktop) */}
+      <div className="fixed bottom-6 left-4 md:top-10 md:left-10 md:bottom-auto z-[100] pointer-events-auto flex items-center gap-2 md:gap-4">
+        <span className="hidden md:inline font-mono text-[10px] tracking-[0.2em] uppercase text-primary-text/40">System:</span>
         <button 
           onClick={toggleEngage}
-          className="relative flex items-center bg-primary-text/5 border border-primary-text/20 p-1 w-32 h-8 hover:border-primary-text/40 transition-colors"
+          className="relative flex items-center bg-primary-text/5 border border-primary-text/20 p-1 w-32 md:w-40 h-8 hover:border-primary-text/40 transition-colors"
         >
           <div 
             className={`absolute h-6 w-[calc(50%-4px)] bg-accent transition-transform duration-300 ease-out ${isEngaged ? 'translate-x-[calc(100%+4px)]' : 'translate-x-0'}`}
           />
-          <span className={`flex-1 text-center font-mono text-[9px] tracking-widest z-10 transition-colors ${!isEngaged ? 'text-background font-bold' : 'text-primary-text/40'}`}>BYPASS</span>
-          <span className={`flex-1 text-center font-mono text-[9px] tracking-widest z-10 transition-colors ${isEngaged ? 'text-background font-bold' : 'text-primary-text/40'}`}>ENGAGE</span>
+          <span className={`flex-1 text-center font-mono text-[10px] md:text-xs tracking-widest z-10 transition-colors ${!isEngaged ? 'text-background font-bold' : 'text-primary-text/40'}`}>BYPASS</span>
+          <span className={`flex-1 text-center font-mono text-[10px] md:text-xs tracking-widest z-10 transition-colors ${isEngaged ? 'text-background font-bold' : 'text-primary-text/40'}`}>ENGAGE</span>
         </button>
       </div>
 
-      <nav className="fixed right-2 md:right-8 top-[55%] md:top-1/2 -translate-y-1/2 z-[100] flex flex-col gap-5 md:gap-7 items-end pointer-events-auto">
-      {navItems.map((item) => (
-        <button
-          key={item.id}
-          onClick={() => scrollToSection(item.id)}
-          className="group flex items-center gap-3 md:gap-4 transition-all duration-500"
-          aria-label={`Navigate to ${item.label}`}
-        >
-          <span className={`font-mono text-[8px] md:text-[10px] tracking-[0.2em] md:tracking-[0.4em] uppercase transition-all duration-500 ${activeSegment === item.id ? 'text-accent opacity-100 translate-x-0' : 'text-highlight opacity-0 md:opacity-0 translate-x-1 group-hover:opacity-50 group-hover:translate-x-0'}`}>
-            {item.label}
-          </span>
-          <div className={`h-[1px] transition-all duration-500 ${activeSegment === item.id ? 'bg-accent w-10 md:w-14' : 'bg-highlight/20 w-5 md:w-8 group-hover:bg-highlight/50 group-hover:w-7 md:group-hover:w-10'}`} />
-        </button>
-      ))}
+      {/* Native-style Floating Top Navbar */}
+      <nav className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-[100] pointer-events-auto w-[95%] sm:w-[85%] max-w-2xl">
+        <div className="flex items-center justify-between bg-black/70 backdrop-blur-xl border border-white/10 px-6 md:px-10 py-4 md:py-5 rounded-full shadow-2xl">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => scrollToSection(item.id)}
+              className="group relative flex flex-col items-center justify-center transition-all duration-300"
+              aria-label={`Navigate to ${item.label}`}
+            >
+              <span className={`font-mono text-base md:text-xl tracking-widest uppercase transition-colors duration-300 ${activeSegment === item.id ? 'text-accent' : 'text-primary-text/50 group-hover:text-primary-text'}`}>
+                {/* Use short label on mobile, full label on desktop */}
+                <span className="block md:hidden">{item.short}</span>
+                <span className="hidden md:block">{item.label}</span>
+              </span>
+              {/* Active dot indicator */}
+              <div 
+                className={`absolute -bottom-3 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-accent transition-opacity duration-300 ${activeSegment === item.id ? 'opacity-100' : 'opacity-0'}`}
+              />
+            </button>
+          ))}
+        </div>
       </nav>
     </>
   );

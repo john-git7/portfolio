@@ -62,20 +62,20 @@ export default function Hero() {
     return (
       <section id="hero" className="editorial-section editorial-section--hero min-h-[90vh] flex flex-col justify-center py-32">
         <div className="editorial-container flex flex-col items-start max-w-4xl">
-          <h1 className="font-mono text-5xl md:text-8xl tracking-tighter text-highlight mb-4">
+          <h1 className="font-mono text-4xl sm:text-5xl md:text-8xl tracking-tighter text-highlight mb-4">
             John Ebenezer
           </h1>
-          <p className="font-mono text-sm tracking-[0.3em] uppercase text-accent/80 mb-16">
+          <p className="font-mono text-xs sm:text-sm tracking-[0.3em] uppercase text-accent/80 mb-16">
             Heavy Architecture. Fluid Interfaces.
           </p>
           
-          <div className="space-y-8 mb-20 text-lg md:text-2xl text-primary-text/80 font-mono tracking-tight leading-relaxed border-l-2 border-primary-text/10 pl-6">
+          <div className="space-y-8 mb-20 text-base sm:text-lg md:text-2xl text-primary-text/80 font-mono tracking-tight leading-relaxed border-l-2 border-primary-text/10 pl-4 md:pl-6">
             <p>The server must be relentless.<br /><span className="text-primary-text/40">The client must be weightless.</span></p>
-            <p>Backend logic. Visual precision.<br /><span className="text-accent/80 uppercase text-sm tracking-widest">No compromise.</span></p>
+            <p>Backend logic. Visual precision.<br /><span className="text-accent/80 uppercase text-xs sm:text-sm tracking-widest">No compromise.</span></p>
             <p>State consistency under load.<br />60fps under real-time updates.</p>
           </div>
 
-          <p className="text-xl md:text-3xl text-primary-text mb-8">
+          <p className="text-lg sm:text-xl md:text-3xl text-primary-text mb-8">
             Theory is irrelevant without execution.
           </p>
 
@@ -100,46 +100,46 @@ export default function Hero() {
       <div className="absolute inset-0 w-full h-full overflow-hidden flex items-center justify-center pointer-events-auto">
         
         {/* SCENE 01: Hook */}
-        <div className="scene-1 absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-          <h1 className="font-mono text-5xl md:text-[120px] font-bold tracking-tighter text-highlight mix-blend-difference select-none mb-6">
+        <div className="scene-1 absolute inset-0 flex flex-col items-center justify-center text-center px-4 w-full max-w-[95vw] mx-auto">
+          <h1 className="font-mono text-6xl sm:text-7xl md:text-[120px] font-bold tracking-tighter text-highlight mix-blend-difference select-none mb-6">
             John Ebenezer
           </h1>
-          <p className="font-mono text-xs md:text-sm tracking-[0.4em] uppercase text-accent/80">
+          <p className="font-mono text-[10px] sm:text-xs md:text-sm tracking-[0.4em] uppercase text-accent/80">
             Heavy Architecture. Fluid Interfaces.
           </p>
         </div>
 
         {/* SCENE 02: Positioning */}
-        <div className="scene-2 absolute inset-0 flex flex-col items-center justify-center text-center px-4 opacity-0">
-          <p className="font-mono text-3xl md:text-6xl text-primary-text/90 tracking-tight leading-tight">
+        <div className="scene-2 absolute inset-0 flex flex-col items-center justify-center text-center px-4 w-full max-w-[90vw] mx-auto opacity-0">
+          <p className="font-mono text-3xl sm:text-4xl md:text-6xl text-primary-text/90 tracking-tight leading-tight">
             The server must be relentless.<br />
             <span className="text-primary-text/50">The client must be weightless.</span>
           </p>
         </div>
 
         {/* SCENE 03: Differentiation */}
-        <div className="scene-3 absolute inset-0 flex flex-col items-center justify-center text-center px-4 opacity-0">
-          <p className="font-mono text-4xl md:text-7xl text-primary-text font-bold tracking-tighter leading-none mb-8">
+        <div className="scene-3 absolute inset-0 flex flex-col items-center justify-center text-center px-4 w-full max-w-[90vw] mx-auto opacity-0">
+          <p className="font-mono text-4xl sm:text-5xl md:text-7xl text-primary-text font-bold tracking-tighter leading-none mb-8">
             Backend logic.<br />Visual precision.
           </p>
-          <p className="font-mono text-xl md:text-3xl text-accent/80 uppercase tracking-[0.4em]">
+          <p className="font-mono text-lg sm:text-xl md:text-3xl text-accent/80 uppercase tracking-[0.4em]">
             No compromise.
           </p>
         </div>
 
         {/* SCENE 04: Credibility */}
-        <div className="scene-4 absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-          <p className="scene-4-line opacity-0 font-mono text-2xl md:text-5xl text-primary-text/80 mb-6 tracking-tight">
+        <div className="scene-4 absolute inset-0 flex flex-col items-center justify-center text-center px-4 w-full max-w-[90vw] mx-auto">
+          <p className="scene-4-line opacity-0 font-mono text-2xl sm:text-3xl md:text-5xl text-primary-text/80 mb-6 tracking-tight">
             State consistency under load.
           </p>
-          <p className="scene-4-line opacity-0 font-mono text-2xl md:text-5xl text-primary-text/80 tracking-tight">
+          <p className="scene-4-line opacity-0 font-mono text-2xl sm:text-3xl md:text-5xl text-primary-text/80 tracking-tight">
             60fps under real-time updates.
           </p>
         </div>
 
         {/* SCENE 05: Transition */}
-        <div className="scene-5 absolute inset-0 flex flex-col items-center justify-center text-center px-4 opacity-0">
-          <p className="font-mono text-3xl md:text-6xl text-highlight mb-16 tracking-tight">
+        <div className="scene-5 absolute inset-0 flex flex-col items-center justify-center text-center px-4 w-full max-w-[90vw] mx-auto opacity-0">
+          <p className="font-mono text-3xl sm:text-4xl md:text-6xl text-highlight mb-16 tracking-tight">
             Theory is irrelevant without execution.
           </p>
           <button 

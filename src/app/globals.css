@@ -326,26 +326,6 @@
   -webkit-backdrop-filter: blur(10px);
 }
 
-/* 3D Scene Adjustments for Mobile */
-@media (max-width: 768px) {
-  h1 { 
-    font-size: clamp(3rem, 15vw, 6rem) !important; 
-    letter-spacing: -0.05em !important;
-  }
-  h2 { 
-    font-size: clamp(2rem, 10vw, 4rem) !important; 
-  }
-  p { 
-    font-size: clamp(0.85rem, 3vw, 1rem) !important;
-    line-height: 1.7 !important;
-  }
-  
-  /* Navigation compression */
-  .fixed.right-4 {
-    @apply right-2 scale-90;
-  }
-}
-
 /* Hide scrollbar but keep functionality */
 .no-scrollbar::-webkit-scrollbar {
   display: none;

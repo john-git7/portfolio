@@ -55,13 +55,13 @@ export default function Contact() {
             03 // Master Out
           </span>
           
-          <h2 className="contact-header text-4xl md:text-7xl font-mono uppercase tracking-tighter text-primary-text mb-16">
+          <h2 className="contact-header text-3xl sm:text-4xl md:text-7xl font-mono uppercase tracking-tighter text-primary-text mb-16">
             Open a line.
           </h2>
 
           <a 
             href="mailto:contact@johnebenezer.dev"
-            className={`contact-link group relative inline-block text-2xl md:text-5xl font-mono tracking-tight text-accent transition-all duration-500 mb-20 ${isEngaged ? 'cursor-none hover:scale-105 hover:tracking-widest' : 'hover:opacity-80'}`}
+            className={`contact-link group relative inline-block text-[1.1rem] sm:text-2xl md:text-5xl break-all sm:break-normal font-mono tracking-tight text-accent transition-all duration-500 mb-12 md:mb-20 ${isEngaged ? 'cursor-none hover:scale-105 hover:tracking-widest' : 'hover:opacity-80'}`}
           >
             contact@johnebenezer.dev
             <div className={`absolute -bottom-4 left-0 h-[2px] bg-accent transition-all duration-500 ease-out ${isEngaged ? 'w-0 group-hover:w-full' : 'w-full opacity-30 group-hover:opacity-100'}`} />

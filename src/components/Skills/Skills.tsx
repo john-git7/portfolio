@@ -73,7 +73,7 @@ export default function Skills() {
         <div className="mb-16 border-b border-primary-text/20 pb-8 flex justify-between items-end">
           <div>
             <span className="font-mono text-[10px] tracking-widest uppercase text-primary-text/40 block mb-2">02 // Stack</span>
-            <h2 className="text-3xl md:text-5xl font-mono uppercase tracking-tighter text-primary-text">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-mono uppercase tracking-tighter text-primary-text">
               Patch Panel
             </h2>
           </div>
