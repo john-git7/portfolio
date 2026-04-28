@@ -25,18 +25,8 @@ export default function CameraSetup() {
   useEffect(() => {
     if (!animatorRef.current) return;
 
-    // Find scenes in the parent canvas to control visibility
-    const scene = animatorRef.current.parent;
-    const hero = scene?.getObjectByName("scene-hero");
-    const about = scene?.getObjectByName("scene-about");
-    const skills = scene?.getObjectByName("scene-skills");
-    const projects = scene?.getObjectByName("scene-projects");
-    const contact = scene?.getObjectByName("scene-contact");
-
-    const sceneGroups = { hero, about, skills, projects, contact };
-
-    // GSAP controls the animator group and scene visibility
-    const tl = createCameraTimeline(animatorRef.current, document.body, sceneGroups);
+    // Simplified — no scene group visibility management needed
+    const tl = createCameraTimeline(animatorRef.current, document.body);
 
     return () => {
       if (tl) tl.kill();

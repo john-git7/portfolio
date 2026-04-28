@@ -3,169 +3,120 @@
 import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useAppStore } from "@/store/appStore";
 
 const projects = [
   {
     title: "Tunify",
-    description:
-      "A music streaming web application with offline playback and vocal/instrument separation capabilities.",
-    tags: ["React", "Next.js", "Tailwind CSS", "Web Audio API", "Node.js", "Express.js"],
-    demoUrl: "#",
-    codeUrl: "#",
+    description: "Audio engine architecture. Built a complex Web Audio API routing system with offline caching strategies and sub-10ms latency playback.",
+    tags: ["React", "Web Audio API", "IndexedDB", "Node.js"],
+    year: "2025",
   },
   {
-    title: "AgriConnect Marketplace",
-    description:
-      "A digital marketplace connecting farmers directly with consumers for fresh produce.",
-    tags: ["React", "Next.js", "Tailwind CSS", "MongoDB", "Node.js", "Express.js", "Stripe"],
-    demoUrl: "#",
-    codeUrl: "#",
-  },
-  {
-    title: "TaskFlow",
-    description:
-      "A collaborative project management tool with real-time updates and team workspaces.",
-    tags: ["React", "TypeScript", "Tailwind CSS", "Firebase", "Redux"],
-    demoUrl: "#",
-    codeUrl: "#",
-  },
-  {
-    title: "WeatherNow",
-    description:
-      "A beautiful weather application with location-based forecasts and interactive maps.",
-    tags: ["React", "Next.js", "Tailwind CSS", "OpenWeather API", "Leaflet"],
-    demoUrl: "#",
-    codeUrl: "#",
+    title: "AgriConnect",
+    description: "Real-time marketplace architecture. Engineered a MongoDB transaction layer to handle concurrent agricultural inventory updates without race conditions.",
+    tags: ["Next.js", "MongoDB", "Redis", "Stripe API"],
+    year: "2025",
   },
 ];
 
 export default function Projects() {
   const sectionRef = useRef<HTMLElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const { isEngaged } = useAppStore();
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
-
-    // Title reveal animation
-    gsap.fromTo(
-      titleRef.current,
-      { opacity: 0, y: 40 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 70%",
-          toggleActions: "play none none reverse",
-        },
+    
+    const ctx = gsap.context(() => {
+      if (isEngaged) {
+        // Immersive cinematic scroll animations for Engage mode
+        gsap.fromTo(
+          ".project-row",
+          { opacity: 0, x: -40, skewX: 5 },
+          {
+            opacity: 1,
+            x: 0,
+            skewX: 0,
+            duration: 1.2,
+            stagger: 0.3,
+            ease: "power4.out",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 60%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+      } else {
+        // Fast, static-friendly reveal for Bypass mode
+        gsap.fromTo(
+          sectionRef.current,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 85%",
+            },
+          }
+        );
       }
-    );
+    }, sectionRef);
 
-    // Stagger card animations
-    gsap.fromTo(
-      cardRefs.current,
-      { opacity: 0, y: 50 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        ease: "power3.out",
-        stagger: 0.12,
-        delay: 0.2,
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 50%",
-          toggleActions: "play none none reverse",
-        },
-      }
-    );
-  }, []);
+    return () => ctx.revert();
+  }, [isEngaged]);
 
   return (
-    <section
-      ref={sectionRef}
-      id="projects"
-      className="relative w-full overflow-hidden bg-transparent py-24 md:py-32"
-    >
-      <div className="container mx-auto px-6 lg:px-12">
-        {/* Section header */}
-        <div className="mb-24 text-center">
-          <h2
-            ref={titleRef}
-            className="text-4xl md:text-5xl font-heading leading-tight text-primary-text"
-          >
-            Selected Works
-          </h2>
-          <div className="w-16 h-px bg-primary-text/40 mt-6 mx-auto" />
+    <section ref={sectionRef} id="projects" className="editorial-section py-24">
+      <div className="editorial-container">
+        <div className="mb-16 border-b border-primary-text/20 pb-8 flex justify-between items-end">
+          <div>
+            <span className="font-mono text-[10px] tracking-widest uppercase text-primary-text/40 block mb-2">[ ARCHIVE : ACTIVE ]</span>
+            <h2 className="text-3xl md:text-5xl font-mono uppercase tracking-tighter text-primary-text leading-tight">
+              Signal Path.<br />
+              <span className="text-primary-text/50">Core systems.</span>
+            </h2>
+          </div>
+          <span className="font-mono text-[10px] tracking-widest text-primary-text/30 hidden md:block">
+            I/O
+          </span>
         </div>
 
-        {/* Projects list - continuous reading feel */}
-        <div className="space-y-32 md:space-y-48">
+        <div className="flex flex-col gap-0 border-t border-primary-text/10">
           {projects.map((project, index) => (
-            <div
-              key={project.title}
-              ref={(el) => {
-                cardRefs.current[index] = el;
-              }}
-              className={`flex flex-col gap-8 md:gap-16 ${
-                index % 2 === 1 ? "md:flex-row-reverse" : "md:flex-row"
-              } items-center`}
+            <div 
+              key={project.title} 
+              className={`project-row group flex flex-col md:flex-row gap-6 md:gap-12 py-10 md:py-16 border-b border-primary-text/10 transition-colors duration-500 hover:bg-primary-text/[0.02] ${isEngaged ? 'cursor-none hover:pl-4' : ''}`}
+              style={{ transitionProperty: 'background-color, padding-left' }}
             >
-              {/* Project "Image" placeholder styling like a print */}
-              <div className="w-full md:w-1/2">
-                <div className="w-full aspect-[4/3] bg-primary-text/5 border border-primary-text/20 p-2 sm:p-4 shadow-sm relative group overflow-hidden">
-                   <div className="absolute inset-x-0 bottom-0 top-0 m-4 sm:m-6 border border-primary-text/10" />
-                   {/* In a real project, replace this with next/image */}
-                   <div className="w-full h-full bg-surface/50 border border-primary-text/10 flex items-center justify-center">
-                      <span className="font-serif italic text-primary-text/40 text-lg">Plate {index + 1}</span>
-                   </div>
-                </div>
+              <div className="md:w-1/4 shrink-0 flex flex-col justify-between">
+                <span className="font-mono text-2xl md:text-4xl text-primary-text/20 group-hover:text-accent transition-colors duration-500">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className="font-mono text-[10px] tracking-widest text-primary-text/40 mt-4 md:mt-0">
+                  {project.year}
+                </span>
               </div>
-
-              {/* Project Content */}
-              <div className="w-full md:w-1/2 space-y-6">
-                {/* Chapter/Number */}
-                <div className="text-xl font-serif italic text-primary-text/50">
-                  Chapter {String(index + 1).padStart(2, "0")}
+              
+              <div className="md:w-3/4 flex flex-col justify-between">
+                <div>
+                  <h3 className="font-mono text-xl md:text-2xl uppercase tracking-wider text-primary-text mb-4 group-hover:text-accent transition-colors duration-500">
+                    {project.title}
+                  </h3>
+                  <p className="text-primary-text/70 text-base leading-relaxed max-w-2xl font-light">
+                    {project.description}
+                  </p>
                 </div>
-
-                <h3 className="text-3xl md:text-4xl font-heading text-primary-text">
-                  {project.title}
-                </h3>
-
-                <p className="text-lg font-serif text-primary-text/80 leading-relaxed max-w-lg">
-                  {project.description}
-                </p>
-
-                {/* Tags styled like print metadata */}
-                <div className="flex flex-wrap gap-x-4 gap-y-2 pt-4 border-t border-primary-text/20 max-w-lg">
+                
+                <div className="flex flex-wrap gap-4 mt-8 pt-6 border-t border-primary-text/5">
                   {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-sm font-body text-primary-text/70 uppercase tracking-wider"
-                    >
-                      {tag}
+                    <span key={tag} className="font-mono text-[9px] tracking-widest uppercase text-primary-text/50">
+                      [{tag}]
                     </span>
                   ))}
-                </div>
-
-                {/* Print style links */}
-                <div className="flex gap-8 pt-4">
-                  <a
-                    href={project.demoUrl}
-                    className="font-body text-sm tracking-widest uppercase border-b border-primary-text/30 hover:border-primary-text text-primary-text transition-colors pb-1"
-                  >
-                    View Project
-                  </a>
-                  <a
-                    href={project.codeUrl}
-                    className="font-body text-sm tracking-widest uppercase border-b border-primary-text/30 hover:border-primary-text text-primary-text transition-colors pb-1"
-                  >
-                    Source Code
-                  </a>
                 </div>
               </div>
             </div>

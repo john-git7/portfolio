@@ -21,8 +21,15 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "John Ebenezer - Full Stack Developer",
-  description: "Cinematic 3D Portfolio",
+  title: "John Ebenezer — Full Stack Developer | React, Next.js, Node.js",
+  description:
+    "Portfolio of John Ebenezer, a Full Stack Developer specializing in React, Next.js, Node.js, and MongoDB. Building elegant digital experiences with modern web technologies.",
+  keywords: ["Full Stack Developer", "React", "Next.js", "Node.js", "Portfolio", "John Ebenezer"],
+  openGraph: {
+    title: "John Ebenezer — Full Stack Developer",
+    description: "Building elegant digital experiences with modern web technologies.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

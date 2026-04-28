@@ -33,8 +33,8 @@ export default function Lighting() {
 
       <color attach="background" args={["#0a0806"]} />
       
-      {/* Cinematic Fog - Lightened for better depth visibility */}
-      <fogExp2 attach="fog" args={["#0a0806", 0.012]} />
+      {/* Cinematic Fog - Reduced density so background stays visible throughout scroll */}
+      <fogExp2 attach="fog" args={["#0a0806", 0.005]} />
     </>
   );
 }
