@@ -5,9 +5,11 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useAppStore } from "@/store/appStore";
 
+
+
 const socialLinks = [
   { name: "GitHub", url: "https://github.com/john-git7", icon: "↗" },
-  { name: "LinkedIn", url: "https://linkedin.com/in/john-ebenezer", icon: "↗" },
+  { name: "LinkedIn", url: "https://www.linkedin.com/in/john-ebenezer-b99ba6316/", icon: "↗" },
 ];
 
 export default function Contact() {
@@ -60,10 +62,10 @@ export default function Contact() {
           </h2>
 
           <a 
-            href="mailto:contact@johnebenezer.dev"
+            href="mailto:johnebenezerxa@gmail.com"
             className={`contact-link group relative inline-block text-[1.1rem] sm:text-2xl md:text-5xl break-all sm:break-normal font-mono tracking-tight text-accent transition-all duration-500 mb-12 md:mb-20 ${isEngaged ? 'cursor-none hover:scale-105 hover:tracking-widest' : 'hover:opacity-80'}`}
-          >
-            contact@johnebenezer.dev
+          >   
+            johnebenezerxa@gmail.com 
             <div className={`absolute -bottom-4 left-0 h-[2px] bg-accent transition-all duration-500 ease-out ${isEngaged ? 'w-0 group-hover:w-full' : 'w-full opacity-30 group-hover:opacity-100'}`} />
           </a>
 
