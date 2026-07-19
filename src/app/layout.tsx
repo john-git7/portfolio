@@ -1,33 +1,44 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter, JetBrains_Mono } from "next/font/google";
+import { Syne, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const playfairDisplay = Playfair_Display({
+const syne = Syne({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-playfair-display",
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-syne",
+  display: "swap",
 });
 
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["300", "400", "500"],
   variable: "--font-inter",
+  display: "swap",
 });
 
 const jetBrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-jetbrains-mono",
+  weight: ["400", "500"],
+  variable: "--font-mono",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "John Ebenezer — Full Stack Developer | React, Next.js, Node.js",
+  title: "John Ebenezer — Full Stack Developer",
   description:
-    "Portfolio of John Ebenezer, a Full Stack Developer specializing in React, Next.js, Node.js, and MongoDB. Building elegant digital experiences with modern web technologies.",
-  keywords: ["Full Stack Developer", "React", "Next.js", "Node.js", "Portfolio", "John Ebenezer"],
+    "Portfolio of John Ebenezer, a Full Stack Developer specializing in React, Next.js, Node.js, and AI-powered products. Building precise digital experiences.",
+  keywords: [
+    "Full Stack Developer",
+    "React",
+    "Next.js",
+    "Node.js",
+    "AI",
+    "Portfolio",
+    "John Ebenezer",
+  ],
   openGraph: {
     title: "John Ebenezer — Full Stack Developer",
-    description: "Building elegant digital experiences with modern web technologies.",
+    description: "Building AI-powered experiences with craft and precision.",
     type: "website",
   },
 };
@@ -40,7 +51,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${playfairDisplay.variable} ${inter.variable} ${jetBrainsMono.variable} antialiased text-primary-text min-h-screen`}
+        className={`${syne.variable} ${inter.variable} ${jetBrainsMono.variable} antialiased`}
       >
         {children}
       </body>

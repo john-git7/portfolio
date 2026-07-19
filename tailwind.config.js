@@ -23,12 +23,15 @@ module.exports = {
         accent: 'var(--accent)',
         highlight: 'var(--highlight)',
         primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
+          DEFAULT: 'var(--primary)',
+          foreground: 'var(--primary-foreground, #fff)',
         },
         secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
+          DEFAULT: 'var(--secondary)',
+          foreground: 'var(--secondary-foreground, #fff)',
+        },
+        success: {
+          DEFAULT: 'var(--success)',
         },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
