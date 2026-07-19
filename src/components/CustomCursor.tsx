@@ -1,44 +1,95 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 
+/**
+ * Custom cursor — two layer system:
+ *   - cursor-dot   : 6px solid dot, snaps immediately to mouse
+ *   - cursor-ring  : 36px ring, follows with GSAP lag (cinematic weight)
+ *
+ * On hover (links, buttons):
+ *   - Ring expands to 56px
+ *   - Gold tint appears
+ *
+ * Hidden on mobile (pointer: coarse).
+ * Always active — no mode gates.
+ */
 export default function CustomCursor() {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
+  const dotRef  = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setPosition({ x: e.clientX, y: e.clientY });
+    // Only show on fine-pointer devices
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+
+    const dot  = dotRef.current;
+    const ring = ringRef.current;
+    if (!dot || !ring) return;
+
+    // GSAP quickSetter for performance
+    const setDotX  = gsap.quickSetter(dot,  "x", "px");
+    const setDotY  = gsap.quickSetter(dot,  "y", "px");
+
+    // Ring follows with lerp in the ticker
+    const pos = { x: 0, y: 0 };
+
+    const onMouseMove = (e: MouseEvent) => {
+      // Dot snaps instantly
+      setDotX(e.clientX);
+      setDotY(e.clientY);
+
+      // Ring target
+      pos.x = e.clientX;
+      pos.y = e.clientY;
     };
 
-    const handleMouseOver = (e: MouseEvent) => {
-      if ((e.target as HTMLElement).tagName === 'BUTTON' || (e.target as HTMLElement).closest('button')) {
-        setIsHovered(true);
+    // Smooth ring follow
+    const ticker = gsap.ticker.add(() => {
+      if (!ring) return;
+      const current = { x: parseFloat(ring.style.transform?.match(/translateX\(([^)]+)px\)/)?.[1] ?? "0"), y: parseFloat(ring.style.transform?.match(/translateY\(([^)]+)px\)/)?.[1] ?? "0") };
+      const lerpFactor = 0.12;
+      const nx = current.x + (pos.x - current.x) * lerpFactor;
+      const ny = current.y + (pos.y - current.y) * lerpFactor;
+      ring.style.transform = `translate(calc(${nx}px - 50%), calc(${ny}px - 50%))`;
+    });
+
+    // Hover state detection
+    const onPointerOver = (e: PointerEvent) => {
+      const target = e.target as HTMLElement;
+      const isInteractive =
+        target.closest("a") ||
+        target.closest("button") ||
+        target.closest("[data-cursor='link']");
+
+      if (isInteractive) {
+        ring?.classList.add("is-link");
+        ring?.classList.remove("is-hovering");
       } else {
-        setIsHovered(false);
+        ring?.classList.remove("is-link");
       }
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseover', handleMouseOver);
+    const onPointerOut = () => {
+      ring?.classList.remove("is-link", "is-hovering");
+    };
+
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("pointerover", onPointerOver);
+    window.addEventListener("pointerout", onPointerOut);
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseover', handleMouseOver);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("pointerover", onPointerOver);
+      window.removeEventListener("pointerout", onPointerOut);
+      gsap.ticker.remove(ticker);
     };
   }, []);
 
   return (
-    <div 
-      className="fixed top-0 left-0 w-8 h-8 pointer-events-none z-[9999] mix-blend-difference hidden md:block"
-      style={{
-        transform: `translate(${position.x - 16}px, ${position.y - 16}px)`,
-        transition: 'transform 0.1s ease-out',
-      }}
-    >
-      <div className={`w-full h-full border border-accent rounded-full transition-transform duration-300 ${isHovered ? 'scale-150 bg-accent/20' : 'scale-100'}`} />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-1 bg-accent rounded-full" />
-    </div>
+    <>
+      <div ref={dotRef}  className="cursor-dot"  aria-hidden="true" />
+      <div ref={ringRef} className="cursor-ring" aria-hidden="true" />
+    </>
   );
 }

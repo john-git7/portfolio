@@ -3,27 +3,27 @@
 import { useRef, useMemo } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
-import { Float } from "@react-three/drei";
 import { globalScrollState } from "@/store/scrollStore";
 
-/**
- * Floating metallic particles that drift gently through the scene.
- * These are purely decorative ambient elements.
- */
-function AmbientParticles({ count = 80 }: { count?: number }) {
+// =============================================================
+// DUST PARTICLES
+// Near-invisible fine particles that create atmospheric depth.
+// Near-white, very small, extremely low opacity — felt, not seen.
+// =============================================================
+function DustParticles({ count = 120 }: { count?: number }) {
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const dummy = useMemo(() => new THREE.Object3D(), []);
-  
+
   const particles = useMemo(() => {
-    return Array.from({ length: count }, (_, i) => ({
+    return Array.from({ length: count }, () => ({
       position: [
-        (Math.random() - 0.5) * 60,
-        (Math.random() - 0.5) * 120 - 40,
-        (Math.random() - 0.5) * 80 - 20,
+        (Math.random() - 0.5) * 50,
+        (Math.random() - 0.5) * 100 - 20,
+        (Math.random() - 0.5) * 40 - 10,
       ] as [number, number, number],
-      speed: 0.1 + Math.random() * 0.3,
+      speed: 0.04 + Math.random() * 0.08,
       offset: Math.random() * Math.PI * 2,
-      scale: 0.02 + Math.random() * 0.06,
+      scale: 0.006 + Math.random() * 0.012,
     }));
   }, [count]);
 
@@ -33,9 +33,9 @@ function AmbientParticles({ count = 80 }: { count?: number }) {
 
     particles.forEach((p, i) => {
       dummy.position.set(
-        p.position[0] + Math.sin(t * p.speed + p.offset) * 2,
-        p.position[1] + Math.cos(t * p.speed * 0.7 + p.offset) * 1.5,
-        p.position[2] + Math.sin(t * p.speed * 0.5 + p.offset * 2) * 1
+        p.position[0] + Math.sin(t * p.speed + p.offset) * 1.2,
+        p.position[1] + Math.cos(t * p.speed * 0.6 + p.offset) * 0.8,
+        p.position[2] + Math.sin(t * p.speed * 0.4 + p.offset * 2) * 0.6
       );
       dummy.scale.setScalar(p.scale);
       dummy.updateMatrix();
@@ -47,128 +47,111 @@ function AmbientParticles({ count = 80 }: { count?: number }) {
 
   return (
     <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
-      <sphereGeometry args={[1, 8, 8]} />
-      <meshStandardMaterial
-        color="#d4a017"
-        emissive="#d4a017"
-        emissiveIntensity={0.3}
-        metalness={1}
-        roughness={0.3}
+      <sphereGeometry args={[1, 4, 4]} />
+      <meshBasicMaterial
+        color="#D4C9B0"
         transparent
-        opacity={0.6}
+        opacity={0.18}
       />
     </instancedMesh>
   );
 }
 
-/**
- * Floating geometric accents at various depths.
- * Creates visual interest without competing with DOM content.
- */
-function FloatingGeometry() {
-  const group1 = useRef<THREE.Mesh>(null);
-  const group2 = useRef<THREE.Mesh>(null);
-  const group3 = useRef<THREE.Mesh>(null);
-  
-  const wrapperRef = useRef<THREE.Group>(null);
+// =============================================================
+// SCULPTURAL TORUS KNOT
+// The primary 3D object. Dark metal, architectural, neutral.
+// Positioned right-center, partially off-screen for editorial feel.
+// Gold accent point light orbits it slowly.
+// =============================================================
+function SculpturalObject() {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const goldLightRef = useRef<THREE.PointLight>(null);
+  const groupRef = useRef<THREE.Group>(null);
 
-  useFrame(({ clock }) => {
+  const targetRotation = useRef({ x: 0, y: 0 });
+  const currentRotation = useRef({ x: 0, y: 0 });
+
+  useFrame(({ clock, mouse }) => {
     const t = clock.elapsedTime;
-    
-    // Read the scroll directly from the global state 
-    // to bypass Context constraints inside the R3F Canvas
-    if (wrapperRef.current) {
-      wrapperRef.current.position.y = globalScrollState.scroll * 0.02;
+
+    // Slow idle rotation — deliberate, heavy, confident
+    if (meshRef.current) {
+      meshRef.current.rotation.x += 0.0007;
+      meshRef.current.rotation.y += 0.0012;
+      meshRef.current.rotation.z += 0.0004;
     }
 
-    if (group1.current) {
-      group1.current.rotation.x = t * 0.05;
-      group1.current.rotation.y = t * 0.08;
+    // Gold light orbits the sculpture
+    if (goldLightRef.current) {
+      goldLightRef.current.position.x = Math.sin(t * 0.3) * 4;
+      goldLightRef.current.position.y = Math.cos(t * 0.2) * 3;
+      goldLightRef.current.position.z = Math.cos(t * 0.3) * 4 + 2;
     }
-    if (group2.current) {
-      group2.current.rotation.x = t * 0.03;
-      group2.current.rotation.z = t * 0.06;
-    }
-    if (group3.current) {
-      group3.current.rotation.y = t * 0.04;
-      group3.current.rotation.z = t * 0.02;
+
+    // Mouse parallax — subtle, cinematic inertia
+    targetRotation.current.x = -mouse.y * 0.12;
+    targetRotation.current.y = mouse.x * 0.12;
+
+    currentRotation.current.x = THREE.MathUtils.lerp(
+      currentRotation.current.x,
+      targetRotation.current.x,
+      0.04
+    );
+    currentRotation.current.y = THREE.MathUtils.lerp(
+      currentRotation.current.y,
+      targetRotation.current.y,
+      0.04
+    );
+
+    // Scroll parallax — sculpture drifts as user scrolls
+    if (groupRef.current) {
+      groupRef.current.rotation.x = currentRotation.current.x;
+      groupRef.current.rotation.y = currentRotation.current.y;
+      groupRef.current.position.y =
+        -globalScrollState.scroll * 0.003 + Math.sin(t * 0.25) * 0.08;
     }
   });
 
   return (
-    <group ref={wrapperRef}>
-      {/* Deep background torus */}
-      <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.5}>
-        <mesh ref={group1} position={[15, -30, -40]} castShadow>
-          <torusGeometry args={[3, 0.08, 16, 64]} />
-          <meshStandardMaterial
-            color="#d4a017"
-            metalness={1}
-            roughness={0.1}
-            transparent
-            opacity={0.4}
-          />
-        </mesh>
-      </Float>
+    // Right-offset, partially off viewport for editorial asymmetry
+    <group ref={groupRef} position={[3.8, 0.2, -2]}>
+      {/* Gold accent orbiting light */}
+      <pointLight
+        ref={goldLightRef}
+        color="#C8A96E"
+        intensity={28}
+        distance={14}
+      />
 
-      {/* Mid-depth icosahedron */}
-      <Float speed={2} rotationIntensity={0.4} floatIntensity={0.3}>
-        <mesh ref={group2} position={[-20, -60, -30]} castShadow>
-          <icosahedronGeometry args={[2, 0]} />
-          <meshStandardMaterial
-            color="#1a120b"
-            metalness={0.9}
-            roughness={0.2}
-            wireframe
-          />
-        </mesh>
-      </Float>
+      {/* Cold rim light from behind-left */}
+      <pointLight
+        position={[-6, 2, -6]}
+        color="#D0E4F0"
+        intensity={10}
+        distance={20}
+      />
 
-      {/* Lower octahedron */}
-      <Float speed={1} rotationIntensity={0.2} floatIntensity={0.6}>
-        <mesh ref={group3} position={[25, -90, -25]} castShadow>
-          <octahedronGeometry args={[1.5, 0]} />
-          <meshStandardMaterial
-            color="#d4a017"
-            metalness={1}
-            roughness={0.05}
-            transparent
-            opacity={0.3}
-          />
-        </mesh>
-      </Float>
-
-      {/* Ring near contact section */}
-      <Float speed={0.8} rotationIntensity={0.15} floatIntensity={0.4}>
-        <mesh position={[-10, -120, -35]} rotation={[Math.PI / 3, 0, 0]}>
-          <torusGeometry args={[4, 0.04, 16, 100]} />
-          <meshStandardMaterial
-            color="#f0c554"
-            metalness={1}
-            roughness={0}
-            transparent
-            opacity={0.25}
-          />
-        </mesh>
-      </Float>
+      <mesh ref={meshRef} castShadow={false}>
+        <torusKnotGeometry args={[1.15, 0.32, 220, 28, 2, 3]} />
+        <meshStandardMaterial
+          color="#1A1A1A"
+          metalness={0.96}
+          roughness={0.11}
+          envMapIntensity={0.8}
+        />
+      </mesh>
     </group>
   );
 }
 
-/**
- * The ambient background scene. Purely decorative, no content.
- * Creates depth and cinematic atmosphere behind DOM sections.
- */
+// =============================================================
+// AMBIENT SCENE EXPORT
+// =============================================================
 export default function AmbientScene() {
   return (
     <group>
-      <AmbientParticles count={80} />
-      <FloatingGeometry />
-      
-      {/* Subtle ambient lights at different depths */}
-      <pointLight position={[10, -20, -15]} intensity={30} color="#d4a017" distance={40} />
-      <pointLight position={[-15, -60, -20]} intensity={20} color="#f0c554" distance={35} />
-      <pointLight position={[20, -100, -10]} intensity={15} color="#add8e6" distance={30} />
+      <DustParticles count={110} />
+      <SculpturalObject />
     </group>
   );
 }

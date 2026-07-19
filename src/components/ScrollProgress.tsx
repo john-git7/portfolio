@@ -5,7 +5,8 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 /**
- * A thin golden progress bar at the top of the viewport showing scroll position.
+ * Single-pixel gold scroll progress bar at the very top of the viewport.
+ * Subtle — gives orientation without demanding attention.
  */
 export default function ScrollProgress() {
   const barRef = useRef<HTMLDivElement>(null);
@@ -13,29 +14,26 @@ export default function ScrollProgress() {
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
-    if (!barRef.current) return;
+    const bar = barRef.current;
+    if (!bar) return;
 
-    const ctx = gsap.context(() => {
-      gsap.to(barRef.current, {
-        scaleX: 1,
-        ease: "none",
-        scrollTrigger: {
-          trigger: document.body,
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 0.3,
-        },
-      });
-    });
+    const update = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? scrollTop / docHeight : 0;
+      gsap.set(bar, { scaleX: progress });
+    };
 
-    return () => ctx.revert();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
   }, []);
 
   return (
     <div
       ref={barRef}
-      className="scroll-progress"
-      style={{ transform: "scaleX(0)" }}
+      className="scroll-progress-bar"
+      style={{ width: "100%", transformOrigin: "left center", transform: "scaleX(0)" }}
+      aria-hidden="true"
     />
   );
 }

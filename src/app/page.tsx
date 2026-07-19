@@ -1,23 +1,33 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Scene from "@/components/Scene";
-import AudioManager from "@/components/AudioManager";
-import VintagePaperBackground from "@/components/VintagePaperBackground";
-import CustomCursor from "@/components/CustomCursor";
-import Navbar from "@/components/Navbar";
-import ScrollProgress from "@/components/ScrollProgress";
-import Hero from "@/components/Hero/Hero";
-import Skills from "@/components/Skills/Skills";
-import Projects from "@/components/Projects/Projects";
-import Contact from "@/components/Contact/Contact";
-import Footer from "@/components/Footer";
-import { ReactLenis, useLenis } from 'lenis/react';
+import { useEffect } from "react";
+import { ReactLenis, useLenis } from "lenis/react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// UI Shell
+import CustomCursor from "@/components/CustomCursor";
+import ScrollProgress from "@/components/ScrollProgress";
+import Navbar from "@/components/Navbar";
+
+// 3D Background
+import Scene from "@/components/Scene";
+
+// Sections
+import Hero from "@/components/Hero/Hero";
+import About from "@/components/About/About";
+import Projects from "@/components/Projects/Projects";
+import Skills from "@/components/Skills/Skills";
+import Contact from "@/components/Contact/Contact";
+import Footer from "@/components/Footer";
+
 import { globalScrollState } from "@/store/scrollStore";
 
-function GSAPSync() {
+/**
+ * Sync GSAP ScrollTrigger with Lenis smooth scroll.
+ * Must be inside <ReactLenis> to access useLenis().
+ */
+function GSAPLenisSync() {
   const lenis = useLenis(({ scroll, progress }) => {
     globalScrollState.scroll = scroll;
     globalScrollState.progress = progress;
@@ -26,89 +36,93 @@ function GSAPSync() {
 
   useEffect(() => {
     if (!lenis) return;
-    
-    // Sync GSAP ticker with Lenis for smooth ScrollTrigger animations
+
     const update = (time: number) => {
       lenis.raf(time * 1000);
     };
-    
+
     gsap.ticker.add(update);
     gsap.ticker.lagSmoothing(0);
-    
+
     return () => {
       gsap.ticker.remove(update);
     };
   }, [lenis]);
-  
+
   return null;
 }
 
-export default function Home() {
-  const containerRef = useRef<HTMLDivElement>(null);
+const lenisOptions = {
+  duration: 1.4,
+  easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+  smoothWheel: true,
+  autoRaf: false,
+};
 
+export default function Home() {
   useEffect(() => {
-    // Force scroll to top on refresh
-    if (typeof window !== 'undefined') {
-      history.scrollRestoration = 'manual';
+    // Always restore scroll to top on refresh
+    if (typeof window !== "undefined") {
+      history.scrollRestoration = "manual";
       window.scrollTo(0, 0);
     }
 
     gsap.registerPlugin(ScrollTrigger);
-
-    return () => {
-      ScrollTrigger.getAll().forEach(t => t.kill());
-    };
   }, []);
 
   return (
-    <ReactLenis root options={{ duration: 1.4, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smoothWheel: true, autoRaf: false }}>
-      <GSAPSync />
-      <div ref={containerRef} className="relative w-full text-primary-text bg-background font-sans overflow-x-hidden md:cursor-none">
+    <ReactLenis root options={lenisOptions}>
+      <GSAPLenisSync />
+
+      {/* UI Shell — cursor + progress + nav */}
       <CustomCursor />
       <ScrollProgress />
-      
-      {/* Cinematic Texture Layer */}
-      <div className="fixed inset-0 z-[1] pointer-events-none opacity-20">
-        <VintagePaperBackground />
-      </div>
-
-      {/* Global UI Components */}
       <Navbar />
-      <AudioManager />
 
-      {/* 3D Canvas Layer (Fixed Background) */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
+      {/* 3D Canvas — fixed background, always on */}
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 0,
+          pointerEvents: "none",
+        }}
+      >
         <Scene />
       </div>
 
-      {/* =====================
-          SCROLLABLE DOM CONTENT — Natural editorial flow
-          ===================== */}
-      
-      {/* Hero Section */}
-      <Hero />
+      {/* Scrollable DOM Content */}
+      <main
+        style={{
+          position: "relative",
+          zIndex: 10,
+          background: "transparent",
+        }}
+      >
+        <Hero />
 
-      {/* Section Divider */}
-      <div className="section-divider" />
+        {/* Section rule */}
+        <div className="section-rule" aria-hidden="true" />
 
-      {/* Projects Section */}
-      <Projects />
+        <About />
 
-      {/* Section Divider */}
-      <div className="section-divider" />
+        {/* Section rule */}
+        <div className="section-rule" aria-hidden="true" />
 
-      {/* Skills Section */}
-      <Skills />
+        <Projects />
 
-      {/* Section Divider */}
-      <div className="section-divider" />
+        {/* Section rule */}
+        <div className="section-rule" aria-hidden="true" />
 
-      {/* Contact Section */}
-      <Contact />
+        <Skills />
 
-      {/* Footer */}
+        {/* Section rule */}
+        <div className="section-rule" aria-hidden="true" />
+
+        <Contact />
+      </main>
+
       <Footer />
-      </div>
     </ReactLenis>
   );
 }
