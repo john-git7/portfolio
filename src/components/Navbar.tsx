@@ -4,8 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { useLenis } from "lenis/react";
 
 const navItems = [
-  { id: "work",    label: "Work" },
+  { id: "about",   label: "About" },
   { id: "stack",   label: "Stack" },
+  { id: "work",    label: "Work" },
   { id: "contact", label: "Contact" },
 ];
 
@@ -16,19 +17,21 @@ export default function Navbar() {
   const navInnerRef = useRef<HTMLDivElement>(null);
 
   const scrollToSection = (id: string) => {
-    if (id === "top") {
-      lenis
-        ? lenis.scrollTo(0, { duration: 2.2, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) })
-        : window.scrollTo({ top: 0, behavior: "smooth" });
-      return;
-    }
+    const scrollMap: Record<string, number> = {
+      top: 0,
+      about: 0.25,
+      work: 0.51,
+      stack: 0.77,
+      contact: 1.0
+    };
 
-    const el = document.getElementById(id);
-    if (!el) return;
+    const targetProgress = scrollMap[id] ?? 0;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const targetY = maxScroll * targetProgress;
 
     lenis
-      ? lenis.scrollTo(el, { duration: 2.0, offset: -80, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) })
-      : el.scrollIntoView({ behavior: "smooth" });
+      ? lenis.scrollTo(targetY, { duration: 2.0, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) })
+      : window.scrollTo({ top: targetY, behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -36,19 +39,21 @@ export default function Navbar() {
       const y = window.scrollY;
       setScrolled(y > 60);
 
-      // Active section detection
-      const ids = ["contact", "stack", "work"];
-      for (const id of ids) {
-        const el = document.getElementById(id);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top <= window.innerHeight * 0.45) {
-            setActiveId(id);
-            return;
-          }
-        }
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = maxScroll > 0 ? y / maxScroll : 0;
+
+      // Active section detection based on progress thresholds
+      if (progress >= 0.9) {
+        setActiveId("contact");
+      } else if (progress >= 0.64) {
+        setActiveId("stack");
+      } else if (progress >= 0.38) {
+        setActiveId("work");
+      } else if (progress >= 0.12) {
+        setActiveId("about");
+      } else {
+        setActiveId("");
       }
-      setActiveId("");
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });

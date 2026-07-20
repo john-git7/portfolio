@@ -32,7 +32,8 @@ export default function CustomCursor() {
     const setDotY  = gsap.quickSetter(dot,  "y", "px");
 
     // Ring follows with lerp in the ticker
-    const pos = { x: 0, y: 0 };
+    const pos = { x: -100, y: -100 };
+    const current = { x: -100, y: -100 };
 
     const onMouseMove = (e: MouseEvent) => {
       // Dot snaps instantly
@@ -47,11 +48,10 @@ export default function CustomCursor() {
     // Smooth ring follow
     const ticker = gsap.ticker.add(() => {
       if (!ring) return;
-      const current = { x: parseFloat(ring.style.transform?.match(/translateX\(([^)]+)px\)/)?.[1] ?? "0"), y: parseFloat(ring.style.transform?.match(/translateY\(([^)]+)px\)/)?.[1] ?? "0") };
       const lerpFactor = 0.12;
-      const nx = current.x + (pos.x - current.x) * lerpFactor;
-      const ny = current.y + (pos.y - current.y) * lerpFactor;
-      ring.style.transform = `translate(calc(${nx}px - 50%), calc(${ny}px - 50%))`;
+      current.x += (pos.x - current.x) * lerpFactor;
+      current.y += (pos.y - current.y) * lerpFactor;
+      ring.style.transform = `translate(calc(${current.x}px - 50%), calc(${current.y}px - 50%))`;
     });
 
     // Hover state detection

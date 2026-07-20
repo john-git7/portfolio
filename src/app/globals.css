@@ -68,18 +68,6 @@
     cursor: none;
   }
 
-  /* Fine-grain film texture overlay */
-  body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 9998;
-    opacity: 0.028;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-size: 256px 256px;
-  }
 
   /* Typography defaults */
   h1, h2, h3, h4 {
@@ -142,6 +130,89 @@
     z-index: 10;
     width: 100%;
     padding-block: var(--section-py);
+    pointer-events: none; /* Let mouse pass through to canvas */
+  }
+
+  .section > * {
+    pointer-events: auto; /* Allow interactions on contents */
+    transform: translateZ(0); /* Prevent WebKit subpixel text blur during GSAP animations */
+    backface-visibility: hidden;
+  }
+
+  /* Fixed exhibit architecture for desktop, standard flow for mobile */
+  .main-visual-container {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .canvas-wrapper {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .exhibits-wrapper {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  @media (min-width: 769px) {
+    .desktop-exhibit {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding-top: var(--section-py);
+    }
+    
+    /* Hero is visible by default */
+    #hero.desktop-exhibit {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .main-visual-container {
+      position: relative !important;
+      overflow: visible !important;
+      height: auto !important;
+    }
+    .canvas-wrapper {
+      position: fixed !important;
+      inset: 0;
+      z-index: -1;
+    }
+    .exhibits-wrapper {
+      position: relative !important;
+      display: flex !important;
+      flex-direction: column !important;
+      pointer-events: auto;
+      height: auto !important;
+    }
+    .desktop-exhibit {
+      position: relative !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: none !important;
+      padding-top: 3rem;
+      padding-bottom: 1.5rem;
+      display: flex !important;
+      flex-direction: column !important;
+      height: auto !important;
+    }
+    #hero.desktop-exhibit {
+      padding-top: var(--section-py);
+    }
+    .scroll-container {
+      display: none !important;
+    }
   }
 
   /* ==========================================================
@@ -355,7 +426,7 @@
 
   .hero-name {
     font-family: var(--font-heading);
-    font-size: clamp(72px, 11vw, 148px);
+    font-size: clamp(48px, 11vw, 148px);
     font-weight: 800;
     line-height: 0.9;
     letter-spacing: -0.04em;
@@ -385,6 +456,10 @@
     flex-direction: column;
     align-items: center;
     gap: 8px;
+    position: absolute;
+    bottom: clamp(2rem, 5vh, 3.5rem);
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .scroll-indicator-line {
@@ -428,6 +503,14 @@
   .about-text strong {
     font-weight: 500;
     color: var(--text-primary);
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: clamp(4rem, 8vw, 8rem);
+    align-items: start;
+    padding-top: 4vh;
   }
 
   /* ==========================================================
@@ -539,6 +622,17 @@
   /* ==========================================================
      STACK (SKILLS)
      ========================================================== */
+  .skills-layout-split {
+    grid-template-columns: 2.5fr 1fr;
+    align-items: start;
+  }
+
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: clamp(2.5rem, 5vw, 4rem);
+  }
+
   .stack-category {
     font-family: var(--font-mono);
     font-size: 9px;
@@ -665,4 +759,103 @@
 
 .animate-scroll-line {
   animation: scroll-line 2.2s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+}
+
+/* ==========================================================
+   RESPONSIVENESS (MOBILE TWEAKS)
+   ========================================================== */
+@media (max-width: 768px) {
+  :root {
+    --section-py: clamp(6rem, 10vh, 7rem);
+    --gutter: clamp(1rem, 4vw, 2rem);
+  }
+
+  /* Nav adjustments */
+  .nav-inner {
+    padding: 16px var(--gutter);
+  }
+  
+  .nav-inner.scrolled {
+    padding-block: 12px;
+  }
+  
+  .nav-links {
+    gap: 12px;
+  }
+  
+  .nav-link {
+    font-size: 9px;
+  }
+
+  .hero-name {
+    font-size: clamp(36px, 12vw, 72px);
+    word-break: break-word;
+  }
+
+  .scroll-indicator {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    margin-top: 3rem;
+  }
+
+  .about-grid,
+  .skills-layout-split {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+  .about-index {
+    font-size: clamp(60px, 15vw, 80px);
+    margin-bottom: -1rem;
+  }
+
+  /* Projects Section Grid */
+  .work-row {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+    padding-block: 1.5rem;
+  }
+  .work-num {
+    font-size: clamp(32px, 8vw, 48px);
+    margin-top: 0;
+  }
+  .work-title {
+    font-size: clamp(24px, 6vw, 32px);
+    margin-bottom: 8px;
+  }
+  .work-cta-container {
+    align-items: flex-start !important;
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    gap: 1.5rem !important;
+    margin-top: 1rem;
+  }
+
+  /* Skills Section Grid */
+  .stack-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 1rem !important;
+  }
+  
+  .stack-category {
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+  }
+  
+  .stack-item {
+    padding-block: 6px;
+    font-size: 13px;
+  }
+
+  /* Contact Section */
+  .contact-headline {
+    font-size: clamp(36px, 9vw, 56px);
+  }
+  .contact-email {
+    font-size: clamp(16px, 4vw, 24px);
+  }
+  .contact-social-link {
+    font-size: 11px;
+  }
 }
