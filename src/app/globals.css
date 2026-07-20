@@ -201,8 +201,8 @@
       opacity: 1 !important;
       visibility: visible !important;
       transform: none !important;
-      padding-top: 3rem;
-      padding-bottom: 1.5rem;
+      padding-top: 2rem;
+      padding-bottom: 1rem;
       display: flex !important;
       flex-direction: column !important;
       height: auto !important;
@@ -797,7 +797,7 @@
     bottom: auto;
     left: auto;
     transform: none;
-    margin-top: 3rem;
+    margin-top: 1.5rem;
   }
 
   .about-grid,
