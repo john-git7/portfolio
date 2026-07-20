@@ -21,7 +21,7 @@ export default function About() {
       <div className="container-editorial">
         <p
           className="label"
-          style={{ marginBottom: "clamp(3rem, 6vh, 5rem)" }}
+          style={{ marginBottom: "clamp(1.5rem, 4vh, 5rem)" }}
         >
           About
         </p>
