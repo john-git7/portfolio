@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef, useEffect } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useRef } from "react";
+
+import Footer from "../Footer";
 
 const socialLinks = [
   { name: "GitHub",   url: "https://github.com/john-git7" },
@@ -13,63 +13,19 @@ const socialLinks = [
 /**
  * CONTACT SECTION
  *
- * Centered. Minimal. One clear CTA.
- * Large headline → email → social links.
- * Nothing competing for attention.
+ * Driven by MasterTimeline. Positioned absolutely to act as an exhibit in the journey.
  */
 export default function Contact() {
   const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 68%",
-          toggleActions: "play none none none",
-        },
-        defaults: { ease: "power3.out" },
-      });
-
-      tl.fromTo(
-        ".contact-label",
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.8 }
-      )
-        .fromTo(
-          ".contact-headline",
-          { opacity: 0, y: 40 },
-          { opacity: 1, y: 0, duration: 1.1 },
-          "-=0.4"
-        )
-        .fromTo(
-          ".contact-email",
-          { opacity: 0, y: 28 },
-          { opacity: 1, y: 0, duration: 1.0 },
-          "-=0.5"
-        )
-        .fromTo(
-          ".contact-social-link",
-          { opacity: 0, y: 16 },
-          { opacity: 1, y: 0, duration: 0.7, stagger: 0.12 },
-          "-=0.4"
-        );
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
 
   return (
     <section
       id="contact"
       ref={sectionRef}
-      className="section"
+      className="section contact-section desktop-exhibit"
       aria-label="Contact"
-      style={{ textAlign: "center" }}
     >
-      <div className="container-editorial">
+      <div className="container-editorial" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div
           style={{
             display: "flex",
@@ -93,6 +49,7 @@ export default function Contact() {
             href="mailto:johnebenezerxa@gmail.com"
             className="contact-email"
             data-cursor="link"
+            style={{ display: "inline-block" }}
           >
             johnebenezerxa@gmail.com
           </a>
@@ -129,6 +86,9 @@ export default function Contact() {
             ))}
           </div>
         </div>
+      </div>
+      <div className="contact-footer" style={{ width: "100%", position: "absolute", bottom: 0, left: 0 }}>
+        <Footer />
       </div>
     </section>
   );

@@ -1,87 +1,54 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useRef } from "react";
 
 /**
  * ABOUT SECTION
  *
  * Two-column: ghost index left, bio right.
- * Minimal. Authentic. Readable.
- * Three short statements — no long paragraphs.
+ * Now driven by MasterTimeline for scroll animations.
  */
 export default function About() {
   const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ".about-reveal",
-        { opacity: 0, y: 36 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1.1,
-          stagger: 0.15,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 72%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
 
   return (
     <section
       id="about"
       ref={sectionRef}
-      className="section"
-      aria-label="About John Ebenezer"
+      className="section about-section desktop-exhibit"
+      aria-label="About"
     >
       <div className="container-editorial">
-        {/* Section label */}
-        <p className="about-reveal label" style={{ marginBottom: "clamp(3rem, 6vh, 5rem)" }}>
+        <p
+          className="label"
+          style={{ marginBottom: "clamp(3rem, 6vh, 5rem)" }}
+        >
           About
         </p>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "auto 1fr",
-            gap: "clamp(2rem, 6vw, 8rem)",
-            alignItems: "start",
-          }}
-        >
-          {/* Ghost index */}
+        <div className="about-grid">
           <span
-            className="about-index about-reveal"
+            className="about-index"
             aria-hidden="true"
             style={{ lineHeight: "0.88" }}
           >
             01
           </span>
 
-          {/* Bio */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "1.6rem" }}>
-            <p className="about-text about-reveal">
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "1.6rem" }}
+          >
+            <p className="about-text">
               <strong>Full-stack developer</strong> focused on building AI-powered
               products with engineering precision and thoughtful UX.
             </p>
-            <p className="about-text about-reveal">
+            <p className="about-text">
               Currently studying Computer Science at{" "}
               <strong>Kalvium / Kalasalingam University</strong>.
               Previously interned at Zippy Digital Solutions,
               and led an n8n Automation Workshop.
             </p>
-            <p className="about-text about-reveal">
+            <p className="about-text">
               Finalist at the IIT Palakkad Hackathon. Drawn to problems
               where <strong>craft and velocity</strong> both matter.
             </p>

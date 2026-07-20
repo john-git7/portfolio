@@ -1,8 +1,7 @@
 "use client";
 
-import { useRef, useEffect } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useRef, useState, useEffect } from "react";
+import gsap from "gsap";
 
 const projects = [
   {
@@ -13,63 +12,56 @@ const projects = [
     year: "2026",
     url: "#",
     github: "https://github.com/john-git7",
+    image: "/images/devgrasp.png",
   },
 ];
 
-/**
- * WORK SECTION
- *
- * Full-width editorial list layout.
- * Each project: ghost number | title + description + tags | year + CTA
- * Hover: number turns gold, subtle warm overlay traces across.
- */
 export default function Projects() {
   const sectionRef = useRef<HTMLElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
+  const [activeImage, setActiveImage] = useState<string | null>(null);
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
+    if (!imageRef.current) return;
+    // We use matchMedia to ensure this effect only runs on desktop
+    const mm = gsap.matchMedia();
+    
+    mm.add("(min-width: 769px)", () => {
+      const xTo = gsap.quickTo(imageRef.current, "x", { duration: 0.6, ease: "power3.out" });
+      const yTo = gsap.quickTo(imageRef.current, "y", { duration: 0.6, ease: "power3.out" });
 
-    const ctx = gsap.context(() => {
-      // Header reveal
-      gsap.fromTo(
-        ".work-header",
-        { opacity: 0, y: 28 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.9,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 75%",
-          },
-        }
-      );
+      const handleMouseMove = (e: MouseEvent) => {
+        xTo(e.clientX);
+        yTo(e.clientY);
+      };
+      
+      window.addEventListener("mousemove", handleMouseMove, { passive: true });
+      return () => {
+        window.removeEventListener("mousemove", handleMouseMove);
+      };
+    });
 
-      // Each row reveals
-      gsap.fromTo(
-        ".work-row",
-        { opacity: 0, y: 48 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1.1,
-          stagger: 0.18,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: ".work-rows",
-            start: "top 72%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-    }, sectionRef);
-
-    return () => ctx.revert();
+    return () => mm.revert();
   }, []);
 
+  const handleMouseEnter = (img: string | undefined) => {
+    if (!img || window.innerWidth < 768) return;
+    setActiveImage(img);
+    gsap.to(imageRef.current, { autoAlpha: 1, scale: 1, rotation: gsap.utils.random(-3, 3), duration: 0.5, ease: "power3.out" });
+  };
+
+  const handleMouseLeave = () => {
+    if (window.innerWidth < 768) return;
+    gsap.to(imageRef.current, { autoAlpha: 0, scale: 0.95, rotation: 0, duration: 0.4, ease: "power3.in" });
+  };
+
   return (
-    <section id="work" ref={sectionRef} className="section" aria-label="Selected work">
+    <section
+      id="work"
+      ref={sectionRef}
+      className="section projects-section desktop-exhibit"
+      aria-label="Selected work"
+    >
       <div className="container-editorial">
         {/* Header */}
         <div
@@ -80,7 +72,7 @@ export default function Projects() {
             justifyContent: "space-between",
             paddingBottom: "clamp(1.5rem, 3vh, 2.5rem)",
             borderBottom: "1px solid var(--border-strong)",
-            marginBottom: "0",
+            marginBottom: "3rem",
           }}
         >
           <div>
@@ -92,10 +84,16 @@ export default function Projects() {
           </span>
         </div>
 
-        {/* Project rows */}
-        <div className="work-rows">
+        {/* Project rows - Treated as exhibits */}
+        <div className="work-rows" style={{ position: "relative", zIndex: 10 }}>
           {projects.map((project, i) => (
-            <div key={project.title} className="work-row">
+            <div 
+              key={project.title} 
+              className="work-row"
+              onMouseEnter={() => handleMouseEnter(project.image)}
+              onMouseLeave={handleMouseLeave}
+              style={{ cursor: "pointer" }}
+            >
               {/* Ghost number */}
               <span className="work-num" aria-hidden="true">
                 {String(i + 1).padStart(2, "0")}
@@ -116,6 +114,7 @@ export default function Projects() {
 
               {/* Year + CTA */}
               <div
+                className="work-cta-container"
                 style={{
                   display: "flex",
                   flexDirection: "column",
@@ -123,10 +122,7 @@ export default function Projects() {
                   gap: "1rem",
                 }}
               >
-                <span
-                  className="label"
-                  style={{ color: "var(--text-dim)" }}
-                >
+                <span className="label" style={{ color: "var(--text-dim)" }}>
                   {project.year}
                 </span>
 
@@ -154,6 +150,38 @@ export default function Projects() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Hover Reveal Image */}
+      <div
+        ref={imageRef}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "40vw",
+          maxWidth: "500px",
+          pointerEvents: "none",
+          zIndex: 5,
+          opacity: 0,
+          visibility: "hidden",
+          transform: "translate(-50%, -50%) scale(0.95)",
+        }}
+      >
+        {activeImage && (
+          <img 
+            src={activeImage} 
+            alt="Project Preview" 
+            style={{ 
+              width: "100%", 
+              height: "auto",
+              borderRadius: "16px", 
+              boxShadow: "0 30px 60px rgba(0,0,0,0.6)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              display: "block" 
+            }} 
+          />
+        )}
       </div>
     </section>
   );

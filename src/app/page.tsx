@@ -9,6 +9,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import CustomCursor from "@/components/CustomCursor";
 import ScrollProgress from "@/components/ScrollProgress";
 import Navbar from "@/components/Navbar";
+import MasterTimeline from "@/components/MasterTimeline";
 
 // 3D Background
 import Scene from "@/components/Scene";
@@ -29,8 +30,13 @@ import { globalScrollState } from "@/store/scrollStore";
  */
 function GSAPLenisSync() {
   const lenis = useLenis(({ scroll, progress }) => {
-    globalScrollState.scroll = scroll;
-    globalScrollState.progress = progress;
+    // Velocity: raw pixel delta per Lenis tick
+    const rawVel = Math.abs(scroll - globalScrollState.prevScroll);
+    globalScrollState.prevScroll       = scroll;
+    globalScrollState.velocity         = rawVel;
+    globalScrollState.smoothVelocity   = globalScrollState.smoothVelocity + (rawVel - globalScrollState.smoothVelocity) * 0.1;
+    globalScrollState.scroll           = scroll;
+    globalScrollState.progress         = progress;
     ScrollTrigger.update();
   });
 
@@ -73,56 +79,32 @@ export default function Home() {
   return (
     <ReactLenis root options={lenisOptions}>
       <GSAPLenisSync />
+      <MasterTimeline />
 
       {/* UI Shell — cursor + progress + nav */}
       <CustomCursor />
       <ScrollProgress />
       <Navbar />
 
-      {/* 3D Canvas — fixed background, always on */}
-      <div
-        style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 0,
-          pointerEvents: "none",
-        }}
-      >
-        <Scene />
+      {/* VISUAL CONTAINER */}
+      <div className="main-visual-container">
+        {/* 3D Canvas — fixed background, always on */}
+        <div className="canvas-wrapper">
+          <Scene />
+        </div>
+
+        {/* DOM Sections */}
+        <div className="exhibits-wrapper">
+          <Hero />
+          <About />
+          <Projects />
+          <Skills />
+          <Contact />
+        </div>
       </div>
 
-      {/* Scrollable DOM Content */}
-      <main
-        style={{
-          position: "relative",
-          zIndex: 10,
-          background: "transparent",
-        }}
-      >
-        <Hero />
-
-        {/* Section rule */}
-        <div className="section-rule" aria-hidden="true" />
-
-        <About />
-
-        {/* Section rule */}
-        <div className="section-rule" aria-hidden="true" />
-
-        <Projects />
-
-        {/* Section rule */}
-        <div className="section-rule" aria-hidden="true" />
-
-        <Skills />
-
-        {/* Section rule */}
-        <div className="section-rule" aria-hidden="true" />
-
-        <Contact />
-      </main>
-
-      <Footer />
+      {/* SCROLLABLE ANCHOR - 600vh container to drive the GSAP Master Timeline slowly and smoothly */}
+      <main className="scroll-container" style={{ height: "600vh", position: "relative" }} />
     </ReactLenis>
   );
 }

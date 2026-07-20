@@ -1,9 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { PerspectiveCamera } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
+import { globalScrollState } from "@/store/scrollStore";
+import { useSceneStore } from "@/store/sceneStore";
 
 /**
  * Cinematic camera with mouse parallax.
@@ -19,7 +21,9 @@ import * as THREE from "three";
  */
 export default function CameraSetup() {
   const driftRef = useRef<THREE.Group>(null);
+  const animatorRef = useRef<THREE.Group>(null);
   const { mouse, size } = useThree();
+  const setCameraGroupRef = useSceneStore((state) => state.setCameraGroupRef);
 
   // Responsive FOV
   const aspect = size.width / size.height;
@@ -29,10 +33,18 @@ export default function CameraSetup() {
   // Slow idle breathing
   const idlePhase = useRef(Math.random() * Math.PI * 2);
 
+  useEffect(() => {
+    if (animatorRef.current) {
+      setCameraGroupRef(animatorRef.current);
+    }
+    return () => setCameraGroupRef(null);
+  }, [setCameraGroupRef]);
+
   useFrame(({ clock }, delta) => {
     if (!driftRef.current) return;
 
-    const t = clock.elapsedTime;
+    const t   = clock.elapsedTime;
+    const vel = globalScrollState.smoothVelocity || 0; // fallback in case it's undefined
 
     // Mouse parallax — very slow lerp for cinematic weight
     const targetX = mouse.x * 0.38;
@@ -47,6 +59,14 @@ export default function CameraSetup() {
       driftRef.current.position.y,
       targetY,
       delta * 1.2
+    );
+
+    // Scroll velocity → subtle Z push: camera "leans in" when scrolling fast
+    const targetZ = -(Math.min(vel, 80) * 0.015);
+    driftRef.current.position.z = THREE.MathUtils.lerp(
+      driftRef.current.position.z,
+      targetZ,
+      delta * 2.5
     );
 
     // Tiny idle breathing rotation — barely perceptible
@@ -71,7 +91,7 @@ export default function CameraSetup() {
   });
 
   return (
-    <group>
+    <group ref={animatorRef}>
       <group ref={driftRef}>
         <PerspectiveCamera
           makeDefault

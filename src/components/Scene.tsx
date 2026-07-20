@@ -5,6 +5,9 @@ import CameraSetup from "../three/cameraSetup";
 import GlobalLighting from "../three/lighting";
 import AmbientScene from "./AmbientScene";
 
+import { EffectComposer, Noise } from "@react-three/postprocessing";
+import { BlendFunction } from "postprocessing";
+
 /**
  * The permanent 3D background world.
  * Always renders — no isEngaged gate.
@@ -16,6 +19,9 @@ function MainScene() {
       <GlobalLighting />
       <CameraSetup />
       <AmbientScene />
+      <EffectComposer disableNormalPass multisampling={4}>
+        <Noise premultiply blendFunction={BlendFunction.OVERLAY} opacity={0.6} />
+      </EffectComposer>
     </>
   );
 }
