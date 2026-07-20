@@ -19,7 +19,7 @@ function MainScene() {
       <GlobalLighting />
       <CameraSetup />
       <AmbientScene />
-      <EffectComposer disableNormalPass multisampling={4}>
+      <EffectComposer multisampling={4}>
         <Noise premultiply blendFunction={BlendFunction.OVERLAY} opacity={0.6} />
       </EffectComposer>
     </>
