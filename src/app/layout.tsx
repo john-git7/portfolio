@@ -1,44 +1,28 @@
 import type { Metadata } from "next";
-import { Syne, Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
-
-const syne = Syne({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-syne",
-  display: "swap",
-});
 
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
-  variable: "--font-inter",
+  variable: "--font-sans",
   display: "swap",
 });
 
-const jetBrainsMono = JetBrains_Mono({
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  weight: ["400", "500"],
   variable: "--font-mono",
   display: "swap",
 });
 
+import SmoothScroller from "@/components/SmoothScroller";
+
 export const metadata: Metadata = {
-  title: "John Ebenezer — Full Stack Developer",
-  description:
-    "Portfolio of John Ebenezer, a Full Stack Developer specializing in React, Next.js, Node.js, and AI-powered products. Building precise digital experiences.",
-  keywords: [
-    "Full Stack Developer",
-    "React",
-    "Next.js",
-    "Node.js",
-    "AI",
-    "Portfolio",
-    "John Ebenezer",
-  ],
+  title: "John Ebenezer | Developer",
+  description: "Computer Science student and Full-Stack Developer focused on building AI tools.",
   openGraph: {
-    title: "John Ebenezer — Full Stack Developer",
-    description: "Building AI-powered experiences with craft and precision.",
+    title: "John Ebenezer | Developer",
+    description: "Computer Science student and Full-Stack Developer focused on building AI tools.",
     type: "website",
   },
 };
@@ -50,10 +34,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${syne.variable} ${inter.variable} ${jetBrainsMono.variable} antialiased`}
-      >
-        {children}
+      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans min-h-screen bg-bg-base text-text-primary selection:bg-accent selection:text-bg-base`}>
+        <div className="fixed inset-0 pointer-events-none z-[-1]">
+          {/* Subtle paper grain and technical grid */}
+          <div className="absolute inset-0 bg-paper-texture opacity-5 mix-blend-multiply"></div>
+          <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+        </div>
+        <Suspense fallback={null}>
+          <SmoothScroller>
+            {children}
+          </SmoothScroller>
+        </Suspense>
       </body>
     </html>
   );
