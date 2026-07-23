@@ -144,6 +144,10 @@ export default function Home() {
             </div>
 
             <div className="flex flex-wrap gap-6 mt-8 font-mono text-caption uppercase tracking-wider text-text-secondary">
+              <a href="/John_Ebenezer_CV.pdf" target="_blank" rel="noopener noreferrer" className="link-arrow hover:text-text-primary text-text-primary font-bold">
+                <span>Resume</span>
+                <span className="arrow-line"></span><span className="arrow-head">↗</span>
+              </a>
               <a href="mailto:johnebenezerxa@gmail.com" className="link-arrow hover:text-text-primary">
                 <span>Email</span>
                 <span className="arrow-line"></span><span className="arrow-head">↗</span>
@@ -324,6 +328,10 @@ export default function Home() {
             Let's talk.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 font-mono text-caption text-text-secondary uppercase tracking-wider">
+            <a href="/John_Ebenezer_CV.pdf" target="_blank" rel="noopener noreferrer" className="link-arrow hover:text-text-primary text-text-primary font-bold">
+              <span>Resume</span>
+              <span className="arrow-line"></span><span className="arrow-head">↗</span>
+            </a>
             <a href="mailto:johnebenezerxa@gmail.com" className="link-arrow hover:text-text-primary">
               <span>Email</span>
               <span className="arrow-line"></span><span className="arrow-head">↗</span>
