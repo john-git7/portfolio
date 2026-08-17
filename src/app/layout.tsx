@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { Suspense } from "react";
+// @ts-ignore
 import "./globals.css";
 
 const inter = Inter({
