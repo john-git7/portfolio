@@ -1,0 +1,60 @@
+{
+  "profile": {
+    "firstName": "JOHN",
+    "lastName": "EBENEZER",
+    "tagline": "Full-Stack Developer",
+    "shortBio": "Full-stack developer specializing in AI-powered developer tools. I build RAG pipelines, backend systems, and interfaces focused on solving real engineering problems.",
+    "aboutText": "I'm a Computer Science student building AI-powered developer tools — most recently DevGrasp, a RAG pipeline for querying GitHub repositories in plain English, and LeadVelox, a real-time SaaS platform for monitoring lead response SLAs. I'm currently looking for a software engineering internship to grow my backend engineering skills.",
+    "availabilityStatus": "Open to SWE Internships"
+  },
+  "resume": {
+    "url": "/John_Ebenezer_CV.pdf",
+    "filename": "John_Ebenezer_CV.pdf",
+    "label": "Resume",
+    "fileSize": "223 KB",
+    "lastUpdated": "2026-10-15T08:27:39.097Z"
+  },
+  "socialLinks": [
+    {
+      "id": "email",
+      "label": "Email",
+      "url": "mailto:johnebenezerxa@gmail.com",
+      "isMail": true
+    },
+    {
+      "id": "linkedin",
+      "label": "LinkedIn",
+      "url": "https://linkedin.com/in/john-ebenezer-b99ba6316",
+      "isMail": false
+    },
+    {
+      "id": "github",
+      "label": "GitHub",
+      "url": "https://github.com/john-git7",
+      "isMail": false
+    },
+    {
+      "id": "leetcode",
+      "label": "LeetCode",
+      "url": "https://leetcode.com/u/Johnze",
+      "isMail": false
+    }
+  ],
+  "customLinks": [],
+  "certificates": {
+    "zippyInternship": "https://drive.google.com/file/d/1nO60MU8S2V1c8c7By4AAK547mLYtfAh0/view?usp=sharing",
+    "n8nWorkshop": "https://drive.google.com/file/d/1FzBoMix_ixmtPDY9-M825hrS-6dBOVZR/view?usp=sharing",
+    "nasaSpaceApps": "https://drive.google.com/file/d/1cTufJDH4uGxqtHeKwLF26gzeSjt8JpuJ/view?usp=sharing",
+    "neuroBots": "https://drive.google.com/file/d/1imzrQnvP49TNxiHibd5ihThyIy8YrtPD/view?usp=sharing"
+  },
+  "coreStack": [
+    "React",
+    "Next.js",
+    "Node.js",
+    "MongoDB",
+    "PostgreSQL",
+    "Docker",
+    "Gemini API",
+    "FastAPI"
+  ]
+}

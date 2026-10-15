@@ -16,6 +16,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 import SmoothScroller from "@/components/SmoothScroller";
+import SecretAdminTrigger from "@/components/SecretAdminTrigger";
 
 export const metadata: Metadata = {
   title: "John Ebenezer | Developer",
@@ -45,6 +46,7 @@ export default function RootLayout({
             {children}
           </SmoothScroller>
         </Suspense>
+        <SecretAdminTrigger />
       </body>
     </html>
   );
